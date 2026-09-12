@@ -51,4 +51,4 @@ const fgschema = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.module('FG', fgschema)
+module.exports = mongoose.model('FG', fgschema)

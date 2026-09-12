@@ -51,4 +51,4 @@ const fgcschema = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.module('FGC', fgcschema)
+module.exports = mongoose.model('FGC', fgcschema)
