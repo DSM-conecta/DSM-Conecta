@@ -3,6 +3,19 @@ const { salvarTelemetria } = require('../services/telemetriaService');
 const { salvarFGC } = require('../services/fgcService');
 const { salvarFG } = require('../services/fgService');
 
+const express = require('express');
+const router = express.Router();
+
+const administradorRoutes = require('./administradorRoutes');
+const telemetriaRoutes = require('./telemetriaRoutes');
+const fgcRoutes = require('./fgcRoutes');
+const fgRoutes = require('./fgRoutes');
+
+router.use('/administradores', administradorRoutes);
+router.use('/telemetria', telemetriaRoutes);
+router.use('/fgc', fgcRoutes);
+router.use('/fg', fgRoutes);
+
 const BROKER_URL = process.env.MQTT_BROKER_URL || 'mqtt://localhost:1883';
 
 const TOPICO_TELEMETRIA = process.env.MQTT_TOPICO_TELEMETRIA || 'telemetria/dados';
@@ -65,4 +78,4 @@ function iniciarMqtt() {
   return client;
 }
 
-module.exports = { iniciarMqtt };
+module.exports = { iniciarMqtt }, router;
