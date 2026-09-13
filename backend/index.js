@@ -10,11 +10,13 @@ const administradorRoutes = require('./administradorRoutes');
 const telemetriaRoutes = require('./telemetriaRoutes');
 const fgcRoutes = require('./fgcRoutes');
 const fgRoutes = require('./fgRoutes');
+const painelRoutes = require('./painelRoutes');
 
 router.use('/administradores', administradorRoutes);
 router.use('/telemetria', telemetriaRoutes);
 router.use('/fgc', fgcRoutes);
 router.use('/fg', fgRoutes);
+router.use('/painel', painelRoutes);
 
 const BROKER_URL = process.env.MQTT_BROKER_URL || 'mqtt://localhost:1883';
 
