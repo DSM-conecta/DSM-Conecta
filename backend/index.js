@@ -1,16 +1,24 @@
+require('dotenv').config();
+const connectDB = require('./src/config/db');
 const mqtt = require('mqtt'); // npm install mqtt
-const { salvarTelemetria } = require('../services/telemetriaService');
-const { salvarFGC } = require('../services/fgcService');
-const { salvarFG } = require('../services/fgService');
+const { salvarTelemetria } = require('./src/services/telemetriaService');
+const { salvarFGC } = require('./src/services/fgcService');
+const { salvarFG } = require('./src/services/fgService');
 
 const express = require('express');
 const router = express.Router();
 
-const administradorRoutes = require('./administradorRoutes');
-const telemetriaRoutes = require('./telemetriaRoutes');
-const fgcRoutes = require('./fgcRoutes');
-const fgRoutes = require('./fgRoutes');
-const painelRoutes = require('./painelRoutes');
+const app = express();
+
+app.use(express.json());
+
+connectDB();
+
+const administradorRoutes = require('./src/routes/admRoutes');
+const telemetriaRoutes = require('./src/routes/telemetriaRoutes');
+const fgcRoutes = require('./src/routes/fgcRoutes');
+const fgRoutes = require('./src/routes/fgRoutes');
+const painelRoutes = require('./src/routes/painelRoutes');
 
 router.use('/administradores', administradorRoutes);
 router.use('/telemetria', telemetriaRoutes);
@@ -80,4 +88,12 @@ function iniciarMqtt() {
   return client;
 }
 
-module.exports = { iniciarMqtt }, router;
+app.use('/', router);
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});
+
+module.exports = { iniciarMqtt, router };

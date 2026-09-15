@@ -1,9 +1,27 @@
 const FG = require('../models/fg');
 const { salvarFG } = require('../services/fgService');
+const { validarFormulario } = require('../validators/fgValidator');
 
 // Criar novo registro FG (via HTTP)
 exports.criar = async (req, res) => {
+    
+    exports.criar = async (req, res) => {
   try {
+    if (!validarFormulario(req.body)) {
+      return res.status(400).json({
+        mensagem: 'Dados do formulário inválidos.'
+      });
+    }
+
+    const registro = await salvarFG(req.body);
+
+    return res.status(201).json(registro);
+  } catch (erro) {
+    return res.status(400).json({ mensagem: erro.message });
+  }
+};
+    
+    try {
     const registro = await salvarFG(req.body);
     return res.status(201).json(registro);
   } catch (erro) {
