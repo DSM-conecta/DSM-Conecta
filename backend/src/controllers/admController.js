@@ -1,5 +1,5 @@
-const bcrypt = require('bcryptjs'); // npm install bcryptjs
-const Administrador = require('../models/Administrador');
+const bcrypt = require("bcryptjs"); // npm install bcryptjs
+const Administrador = require("../models/adm");
 
 // Criar novo administrador
 exports.criar = async (req, res) => {
@@ -8,7 +8,9 @@ exports.criar = async (req, res) => {
 
     const existente = await Administrador.findOne({ email });
     if (existente) {
-      return res.status(400).json({ mensagem: 'Já existe um administrador com este email.' });
+      return res
+        .status(400)
+        .json({ mensagem: "Já existe um administrador com este email." });
     }
 
     const senhaCriptografada = await bcrypt.hash(senha, 10);
@@ -22,7 +24,8 @@ exports.criar = async (req, res) => {
     await administrador.save();
 
     // Não retornar a senha na resposta
-    const { senha: _senha, ...adminSemSenha } = administrador.toObject();
+    const adminSemSenha = administrador.toObject();
+    delete adminSemSenha.senha;
 
     return res.status(201).json(adminSemSenha);
   } catch (erro) {
@@ -33,7 +36,7 @@ exports.criar = async (req, res) => {
 // Listar todos os administradores
 exports.listar = async (req, res) => {
   try {
-    const administradores = await Administrador.find().select('-senha');
+    const administradores = await Administrador.find().select("-senha");
     return res.status(200).json(administradores);
   } catch (erro) {
     return res.status(500).json({ mensagem: erro.message });
@@ -43,10 +46,14 @@ exports.listar = async (req, res) => {
 // Buscar administrador por ID
 exports.buscarPorId = async (req, res) => {
   try {
-    const administrador = await Administrador.findById(req.params.id).select('-senha');
+    const administrador = await Administrador.findById(req.params.id).select(
+      "-senha",
+    );
 
     if (!administrador) {
-      return res.status(404).json({ mensagem: 'Administrador não encontrado.' });
+      return res
+        .status(404)
+        .json({ mensagem: "Administrador não encontrado." });
     }
 
     return res.status(200).json(administrador);
@@ -68,11 +75,13 @@ exports.atualizar = async (req, res) => {
     const administrador = await Administrador.findByIdAndUpdate(
       req.params.id,
       dadosAtualizados,
-      { new: true, runValidators: true }
-    ).select('-senha');
+      { new: true, runValidators: true },
+    ).select("-senha");
 
     if (!administrador) {
-      return res.status(404).json({ mensagem: 'Administrador não encontrado.' });
+      return res
+        .status(404)
+        .json({ mensagem: "Administrador não encontrado." });
     }
 
     return res.status(200).json(administrador);
@@ -87,10 +96,14 @@ exports.remover = async (req, res) => {
     const administrador = await Administrador.findByIdAndDelete(req.params.id);
 
     if (!administrador) {
-      return res.status(404).json({ mensagem: 'Administrador não encontrado.' });
+      return res
+        .status(404)
+        .json({ mensagem: "Administrador não encontrado." });
     }
 
-    return res.status(200).json({ mensagem: 'Administrador removido com sucesso.' });
+    return res
+      .status(200)
+      .json({ mensagem: "Administrador removido com sucesso." });
   } catch (erro) {
     return res.status(500).json({ mensagem: erro.message });
   }
@@ -103,15 +116,17 @@ exports.login = async (req, res) => {
 
     const administrador = await Administrador.findOne({ email });
     if (!administrador) {
-      return res.status(401).json({ mensagem: 'Email ou senha inválidos.' });
+      return res.status(401).json({ mensagem: "Email ou senha inválidos." });
     }
 
     const senhaValida = await bcrypt.compare(senha, administrador.senha);
     if (!senhaValida) {
-      return res.status(401).json({ mensagem: 'Email ou senha inválidos.' });
+      return res.status(401).json({ mensagem: "Email ou senha inválidos." });
     }
 
-    const { senha: _senha, ...adminSemSenha } = administrador.toObject();
+    const adminSemSenha = administrador.toObject();
+    delete adminSemSenha.senha;
+
     return res.status(200).json(adminSemSenha);
   } catch (erro) {
     return res.status(500).json({ mensagem: erro.message });
