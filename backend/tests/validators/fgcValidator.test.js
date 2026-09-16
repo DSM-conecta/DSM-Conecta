@@ -1,4 +1,4 @@
-const { validarFormularioGC } = require('../../src/validators/fgValidator');
+const { validarFormularioGC } = require('../../src/validators/fgcValidator');
 
 describe('Validação do formulário geral', () => {
 
