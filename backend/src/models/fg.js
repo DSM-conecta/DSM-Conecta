@@ -9,43 +9,43 @@ const fgschema = new mongoose.Schema({
         type: String,
         required: [true, "Qual o seu email?"]
     },
-    QGC1:{
+    QG1:{
         type: String,
         required: [true,"Resposta necessaria!"]
     },
-    QGC2:{
+    QG2:{
         type: String,
         required: [true,"Resposta necessaria!"]
     },
-    QGC3:{
+    QG3:{
         type: String,
         required: [true,"Resposta necessaria!"]
     },
-    QGC4:{
+    QG4:{
         type: String,
         required: [true,"Resposta necessaria!"]
     },
-    QGC5:{
+    QG5:{
         type: String,
         required: [true,"Resposta necessaria!"]
     },
-    QGC6:{
+    QG6:{
         type: String,
         required: [true,"Resposta necessaria!"]
     },
-    QGC7:{
+    QG7:{
         type: String,
         required: [true,"Resposta necessaria!"]
     },
-    QGC8:{
+    QG8:{
         type: String,
         required: [true,"Resposta necessaria!"]
     },
-    QGC9:{
+    QG9:{
         type: String,
         required: [true,"Resposta necessaria!"]
     },
-    QGC10:{
+    QG10:{
         type: String,
         required: [true,"Resposta necessaria!"]
     }

@@ -38,7 +38,7 @@ const fgcschema = new mongoose.Schema({
         required: [true,"Resposta necessaria!"]
     },
     QGC8:{
-        type: String,
+        type: Array,
         required: [true,"Resposta necessaria!"]
     },
     QGC9:{
