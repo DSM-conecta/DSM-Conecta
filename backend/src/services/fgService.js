@@ -9,14 +9,14 @@ const FG = require('../models/fg');
 async function salvarFG(dados) {
   const {
     name, email,
-    QGC1, QGC2, QGC3, QGC4, QGC5,
-    QGC6, QGC7, QGC8, QGC9, QGC10,
+    QG1, QG2, QG3, QG4, QG5,
+    QG6, QG7, QG8, QG9, QG10,
   } = dados;
 
   const registro = new FG({
     name, email,
-    QGC1, QGC2, QGC3, QGC4, QGC5,
-    QGC6, QGC7, QGC8, QGC9, QGC10,
+    QG1, QG2, QG3, QG4, QG5,
+    QG6, QG7, QG8, QG9, QG10,
   });
 
   await registro.save();

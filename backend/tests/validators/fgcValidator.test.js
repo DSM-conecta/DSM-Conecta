@@ -1,4 +1,4 @@
-const { validarFormularioG } = require('../../src/validators/fgValidator');
+const { validarFormularioGC } = require('../../src/validators/fgValidator');
 
 describe('Validação do formulário geral', () => {
 
@@ -19,7 +19,7 @@ describe('Validação do formulário geral', () => {
             QGC10: 'Mais informações sobre o mercado de trabalho'
         };
 
-        expect(validarFormularioG(formulario)).toBe(true);
+        expect(validarFormularioGC(formulario)).toBe(true);
     });
 
     test('deve rejeitar formulário sem nome', () => {
@@ -38,7 +38,7 @@ describe('Validação do formulário geral', () => {
         QGC10: 'Mais informações sobre o mercado de trabalho'
     };
 
-    expect(validarFormularioG(formulario)).toBe(false);
+    expect(validarFormularioGC(formulario)).toBe(false);
 });
 
 test('deve rejeitar formulário sem email', () => {
@@ -58,7 +58,7 @@ test('deve rejeitar formulário sem email', () => {
             QGC10: 'Mais informações sobre o mercado de trabalho'
         };
 
-        expect(validarFormularioG(formulario)).toBe(false);
+        expect(validarFormularioGC(formulario)).toBe(false);
     });
 
     test('deve rejeitar email em formato inválido', () => {
@@ -77,7 +77,7 @@ test('deve rejeitar formulário sem email', () => {
         QGC10: 'Mais informações sobre o mercado de trabalho'
     };
 
-    expect(validarFormularioG(formulario)).toBe(false);
+    expect(validarFormularioGC(formulario)).toBe(false);
 });
 
 test('deve rejeitar QGC1 vazia', () => {
@@ -96,7 +96,7 @@ test('deve rejeitar QGC1 vazia', () => {
         QGC10: 'Mais informações sobre o mercado de trabalho'
     };
 
-    expect(validarFormularioG(formulario)).toBe(false);
+    expect(validarFormularioGC(formulario)).toBe(false);
 });
 
 
@@ -116,7 +116,7 @@ test('deve rejeitar QGC2 com nota menor que 1', () => {
         QGC10: 'Mais informações sobre o mercado de trabalho'
     };
 
-    expect(validarFormularioG(formulario)).toBe(false);
+    expect(validarFormularioGC(formulario)).toBe(false);
 });
 
 
@@ -136,7 +136,7 @@ test('deve rejeitar QGC2 com nota maior que 5', () => {
         QGC10: 'Mais informações sobre o mercado de trabalho'
     };
 
-    expect(validarFormularioG(formulario)).toBe(false);
+    expect(validarFormularioGC(formulario)).toBe(false);
 });
 
 
@@ -156,7 +156,7 @@ test('deve rejeitar QGC2 vazia', () => {
         QGC10: 'Mais informações sobre o mercado de trabalho'
     };
 
-    expect(validarFormularioG(formulario)).toBe(false);
+    expect(validarFormularioGC(formulario)).toBe(false);
 });
 
 test('deve rejeitar QGC3 vazia', () => {
@@ -175,7 +175,7 @@ test('deve rejeitar QGC3 vazia', () => {
         QGC10: 'Mais informações sobre o mercado de trabalho'
     };
 
-    expect(validarFormularioG(formulario)).toBe(false);
+    expect(validarFormularioGC(formulario)).toBe(false);
 });
 
 
@@ -195,7 +195,7 @@ test('deve rejeitar QGC4 vazia', () => {
         QGC10: 'Mais informações sobre o mercado de trabalho'
     };
 
-    expect(validarFormularioG(formulario)).toBe(false);
+    expect(validarFormularioGC(formulario)).toBe(false);
 });
 
 
@@ -215,7 +215,7 @@ test('deve rejeitar QGC5 vazia', () => {
         QGC10: 'Mais informações sobre o mercado de trabalho'
     };
 
-    expect(validarFormularioG(formulario)).toBe(false);
+    expect(validarFormularioGC(formulario)).toBe(false);
 });
 
 
@@ -235,7 +235,7 @@ test('deve rejeitar QGC6 vazia', () => {
         QGC10: 'Mais informações sobre o mercado de trabalho'
     };
 
-    expect(validarFormularioG(formulario)).toBe(false);
+    expect(validarFormularioGC(formulario)).toBe(false);
 });
 
 
@@ -255,7 +255,7 @@ test('deve rejeitar QGC7 vazia', () => {
         QGC10: 'Mais informações sobre o mercado de trabalho'
     };
 
-    expect(validarFormularioG(formulario)).toBe(false);
+    expect(validarFormularioGC(formulario)).toBe(false);
 });
 
 
@@ -275,7 +275,7 @@ test('deve rejeitar QGC8 vazia', () => {
         QGC10: 'Mais informações sobre o mercado de trabalho'
     };
 
-    expect(validarFormularioG(formulario)).toBe(false);
+    expect(validarFormularioGC(formulario)).toBe(false);
 });
 
 
@@ -295,7 +295,7 @@ test('deve rejeitar QGC9 vazia', () => {
         QGC10: 'Mais informações sobre o mercado de trabalho'
     };
 
-    expect(validarFormularioG(formulario)).toBe(false);
+    expect(validarFormularioGC(formulario)).toBe(false);
 });
 
 
@@ -315,7 +315,7 @@ test('deve rejeitar QGC10 vazia', () => {
         QGC10: ''
     };
 
-    expect(validarFormularioG(formulario)).toBe(false);
+    expect(validarFormularioGC(formulario)).toBe(false);
 });
 
 });

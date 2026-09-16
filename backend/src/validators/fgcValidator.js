@@ -1,6 +1,6 @@
 const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-function validarFormularioG(dados) {
+function validarFormularioGC(dados) {
     if (!dados.name || dados.name.trim() === '') {
         return false;
     }
@@ -14,52 +14,52 @@ function validarFormularioG(dados) {
     }
 
      // QGC1
-    if (!dados.QG1 || dados.QG1.trim() === '') {
+    if (!dados.QGC1 || dados.QGC1.trim() === '') {
         return false;
     }
 
     // QGC2 - nota de 1 a 5
-    const nota = Number(dados.QG2);
+    const nota = Number(dados.QGC2);
 
-    if (!dados.QG2 || !Number.isInteger(nota) || nota < 1 || nota > 5) {
+    if (!dados.QGC2 || !Number.isInteger(nota) || nota < 1 || nota > 5) {
         return false;
     }
 
     // QGC3 até QGC7
-    if (!dados.QG3 || dados.QG3.trim() === '') {
+    if (!dados.QGC3 || dados.QGC3.trim() === '') {
         return false;
     }
 
-    if (!dados.QG4 || dados.QG4.trim() === '') {
+    if (!dados.QGC4 || dados.QGC4.trim() === '') {
         return false;
     }
 
-    if (!dados.QG5 || dados.QG5.trim() === '') {
+    if (!dados.QGC5 || dados.QGC5.trim() === '') {
         return false;
     }
 
-    if (!dados.QG6 || dados.QG6.trim() === '') {
+    if (!dados.QGC6 || dados.QGC6.trim() === '') {
         return false;
     }
 
-    if (!dados.QG7 || dados.QG7.trim() === '') {
+    if (!dados.QGC7 || dados.QGC7.trim() === '') {
         return false;
     }
 
     // QGC8 até QGC10
-    if (!dados.QG8 || dados.QG8.trim() === '') {
+    if (!dados.QGC8 || dados.QGC8.trim() === '') {
         return false;
     }
 
-    if (!dados.QG9 || dados.QG9.trim() === '') {
+    if (!dados.QGC9 || dados.QGC9.trim() === '') {
         return false;
     }
 
-    if (!dados.QG10 || dados.QG10.trim() === '') {
+    if (!dados.QGC10 || dados.QGC10.trim() === '') {
         return false;
     }
 
     return true;
 }
 
-module.exports = { validarFormularioG };
+module.exports = { validarFormularioGC };
