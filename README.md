@@ -139,5 +139,5 @@ O projeto está em processo de desenvolvimento e novas funcionalidades serão ad
 ## Repositório
 
 ```
-[https://github.com/DSM-conecta/DSM-Conecta](https://github.com/DSM-conecta/DSM-Conecta)
+https://github.com/DSM-conecta/DSM-Conecta
 ```
