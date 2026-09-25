@@ -1,11 +1,11 @@
 const { enviarMensagemBroker } = require("../../src/mqtt/telemetriaPublisher");
 const mqtt = require("mqtt");
 
-// Mock do módulo MQTT para evitar que o Jest abra conexões de rede reais durante o teste
 jest.mock("mqtt", () => {
   const mockClient = {
     publish: jest.fn((topic, mensagem, options, callback) => callback(null)),
     end: jest.fn(),
+    on: jest.fn(), 
   };
   return {
     connect: jest.fn(() => mockClient),
@@ -20,7 +20,6 @@ describe("Validação do Publisher de Telemetria MQTT", () => {
       evento: "teste_ci",
     };
 
-    // Executa a função passando o tópico e os dados
     await expect(
       enviarMensagemBroker("dsm/prod/app/interacao/tela", dados),
     ).resolves.not.toThrow();
@@ -29,13 +28,11 @@ describe("Validação do Publisher de Telemetria MQTT", () => {
   test("deve rejeitar e tratar erro quando o publish falha", async () => {
     const mqttMock = mqtt.connect();
 
-    // Silencia o console.error temporariamente durante este teste
     const spyConsoleError = jest
       .spyOn(console, "error")
       .mockImplementation(() => {});
 
     try {
-      // Simula um erro na chamada do publish
       mqttMock.publish.mockImplementationOnce(
         (topic, mensagem, options, callback) => {
           callback(new Error("Erro de conexão simulado"));
@@ -48,7 +45,6 @@ describe("Validação do Publisher de Telemetria MQTT", () => {
         enviarMensagemBroker("dsm/prod/app/interacao/tela", dados),
       ).rejects.toThrow("Erro de conexão simulado");
     } finally {
-      // Restaura o console.error original ao final do teste
       spyConsoleError.mockRestore();
     }
   });

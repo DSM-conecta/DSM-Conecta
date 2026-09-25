@@ -14,11 +14,11 @@ if (client && typeof client.on === 'function') {
   client.on('connect', () => {
     console.log('[MQTT Publisher] Conectado ao broker!');
   });
-}
 
-client.on('error', (err) => {
-  console.error('[MQTT Publisher] Erro de conexão:', err.message);
-});
+  client.on('error', (err) => {
+    console.error('[MQTT Publisher] Erro de conexão:', err.message);
+  });
+}
 
 /**
  * Publica uma mensagem de telemetria no broker MQTT.
