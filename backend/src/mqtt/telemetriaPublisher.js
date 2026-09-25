@@ -4,7 +4,21 @@ const MQTT_BROKER = process.env.MQTT_BROKER || 'localhost';
 const MQTT_PORT = process.env.MQTT_PORT || 1883;
 const BROKER_URL = `mqtt://${MQTT_BROKER}:${MQTT_PORT}`;
 
-const client = mqtt.connect(BROKER_URL);
+const client = mqtt.connect(BROKER_URL, {
+  username: process.env.MQTT_USER || 'dsm-mosquitto',
+  password: process.env.MQTT_PASSWORD || '12345',
+  reconnectPeriod: 2000,
+});
+
+if (client && typeof client.on === 'function') {
+  client.on('connect', () => {
+    console.log('[MQTT Publisher] Conectado ao broker!');
+  });
+
+  client.on('error', (err) => {
+    console.error('[MQTT Publisher] Erro de conexão:', err.message);
+  });
+}
 
 /**
  * Publica uma mensagem de telemetria no broker MQTT.
@@ -26,10 +40,24 @@ function enviarMensagemBroker(topic, dados) {
         console.error(`[MQTT] Falha ao publicar no tópico ${topic}:`, err);
         return reject(err);
       }
-      console.log(`[MQTT] Mensagem enviada para ${topic}`);
+      console.log(`[MQTT] Payload publicado com sucesso -> Tópico: "${topic}"`);
       resolve();
     });
   });
+}
+
+if (require.main === module) {
+  setTimeout(async () => {
+    try {
+      await enviarMensagemBroker('dsm/prod/app/interacao/tela', {
+        evento: 'teste_via_script_node'
+      });
+      setTimeout(() => client.end(), 1000);
+    } catch (err) {
+      console.error(err);
+      client.end();
+    }
+  }, 500);
 }
 
 module.exports = { enviarMensagemBroker };
