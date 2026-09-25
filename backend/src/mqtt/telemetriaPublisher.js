@@ -10,9 +10,11 @@ const client = mqtt.connect(BROKER_URL, {
   reconnectPeriod: 2000,
 });
 
-client.on('connect', () => {
-  console.log('[MQTT Publisher] Conectado ao broker!');
-});
+if (client && typeof client.on === 'function') {
+  client.on('connect', () => {
+    console.log('[MQTT Publisher] Conectado ao broker!');
+  });
+}
 
 client.on('error', (err) => {
   console.error('[MQTT Publisher] Erro de conexão:', err.message);
