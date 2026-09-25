@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   mongodb:
     image: mongo:latest
@@ -11,13 +9,12 @@ services:
       - mongo_data:/data/db
 
   mosquitto:
-    image: eclipse-mosquitto:latest
+    image: eclipse-mosquitto:2.0  # ou eclipse-mosquitto:latest
     container_name: mosquitto-dsm
-    restart: always
     ports:
       - "1883:1883"
     volumes:
       - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
-
+      - ./mosquitto_passwords.txt:/mosquitto/config/mosquitto_passwords.txt
 volumes:
   mongo_data:
