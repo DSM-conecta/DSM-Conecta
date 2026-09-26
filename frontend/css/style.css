@@ -1,0 +1,123 @@
+/*CONFIGURAÇÕES GERAIS*/
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #1c1c1c;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+
+/*CABEÇALHO*/
+
+header {
+    padding: 25px 30px 0;
+}
+
+.cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 15px;
+}
+
+.instituicao p,
+.curso p {
+    font-size: 14px;
+}
+
+.instituicao p {
+    margin-bottom: 2px;
+}
+
+
+/*MENU*/
+
+nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    background-color: #392c9e;
+
+    height: 26px;
+    border-radius: 15px;
+
+    overflow: hidden;
+}
+
+nav a {
+    color: #ffffff;
+    text-decoration: none;
+
+    font-size: 12px;
+
+    padding: 6px 20px;
+
+    transition: background-color 0.2s;
+}
+
+nav a:hover {
+    background-color: #4b3bbb;
+}
+
+
+/*APRESENTAÇÃO DO CURSO*/
+
+.apresentacao {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    width: 85%;
+    margin: 30px auto 0;
+}
+
+
+/* Texto */
+
+.texto-curso {
+    width: 55%;
+}
+
+.texto-curso p {
+    font-size: 16px;
+    line-height: 1.6;
+    text-align: justify;
+}
+
+
+/* Imagem */
+
+.imagem-fatec {
+    width: 35%;
+}
+
+.imagem-fatec img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+
+/*PARCERIAS*/
+
+.parcerias {
+    width: 85%;
+    margin: 100px auto 0;
+
+    background-color: #d9d9d9;
+    color: #000000;
+
+    padding: 5px 10px;
+}
+
+.parcerias p {
+    font-size: 12px;
+}
