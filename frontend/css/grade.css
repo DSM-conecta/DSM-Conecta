@@ -1,0 +1,94 @@
+/* =========================
+   GRADE CURRICULAR
+========================= */
+
+.grade {
+    position: relative;
+
+    width: 90%;
+    min-height: 550px;
+
+    margin: 40px auto;
+}
+
+
+/* =========================
+   MATÉRIAS
+========================= */
+
+.materias {
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 48%;
+}
+
+.materias h3 {
+    display: inline-block;
+
+    background-color: #d9d9d9;
+    color: #000000;
+
+    font-size: 13px;
+    font-weight: normal;
+
+    padding: 6px 10px;
+
+    margin-bottom: 8px;
+}
+
+.materias p {
+    width: 80%;
+
+    background-color: #d9d9d9;
+    color: #000000;
+
+    margin-bottom: 7px;
+    padding: 6px 10px;
+
+    font-size: 14px;
+    line-height: 1.3;
+}
+
+
+/* =========================
+   CURSOS PREPARATÓRIOS
+========================= */
+
+.cursos-preparatorios {
+    position: absolute;
+
+    right: 0;
+    top: 130px;
+
+    width: 48%;
+}
+
+.cursos-preparatorios h3 {
+    display: inline-block;
+
+    background-color: #d9d9d9;
+    color: #000000;
+
+    font-size: 13px;
+    font-weight: normal;
+
+    padding: 6px 10px;
+
+    margin-bottom: 8px;
+}
+
+.cursos-preparatorios p {
+    width: 85%;
+
+    background-color: #d9d9d9;
+    color: #000000;
+
+    margin-bottom: 7px;
+    padding: 4px 8px;
+
+    font-size: 12px;
+    line-height: 1.2;
+}

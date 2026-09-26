@@ -1,0 +1,61 @@
+/* =========================
+   APRESENTAÇÃO DO CURSO
+========================= */
+
+.apresentacao {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    width: 90%;
+    margin: 50px auto 0;
+}
+
+
+/* =========================
+   TEXTO DO CURSO
+========================= */
+
+.texto-curso {
+    width: 55%;
+}
+
+.texto-curso p {
+    font-size: 18px;
+    line-height: 1.7;
+    text-align: justify;
+}
+
+
+/* =========================
+   IMAGEM DA FATEC
+========================= */
+
+.imagem-fatec {
+    width: 35%;
+}
+
+.imagem-fatec img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+
+/* =========================
+   PARCERIAS
+========================= */
+
+.parcerias {
+    width: 90%;
+    margin: 120px auto 0;
+
+    background-color: #d9d9d9;
+    color: #000000;
+
+    padding: 8px 12px;
+}
+
+.parcerias p {
+    font-size: 14px;
+}
