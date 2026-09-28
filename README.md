@@ -102,6 +102,10 @@ Depois, execute o projeto:
 npm start
 ```
 
+O front-end é servido pelo backend. Com o servidor ativo, a página inicial fica em `http://localhost:5000/` e o acesso administrativo em `http://localhost:5000/admin`.
+
+Para criar a primeira conta administrativa, configure `MONGODB_URI` e execute `npm run admin:create`. O comando solicita nome, e-mail e senha no terminal. Configure também `ADMIN_TOKEN_SECRET` com um valor privado e estável para manter as sessões válidas entre reinicializações.
+
 ## Variáveis de ambiente
 
 As configurações sensíveis do projeto devem ser armazenadas em um arquivo `.env`.

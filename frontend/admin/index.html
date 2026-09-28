@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Painel administrativo | DSM Conecta</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-body">
+    <header class="admin-site-header">
+        <div class="cabecalho">
+            <div class="instituicao"><h1>Fatec Zona Sul</h1><h2>Dom Paulo Evaristo Arns</h2></div>
+            <div class="curso"><h2>Desenvolvimento de Software Multiplataforma</h2></div>
+        </div>
+        <nav aria-label="Navegação do site">
+            <a href="../index.html">Tela inicial</a>
+            <a href="../pages/grade.html">Grade curricular</a>
+            <a href="../pages/sobre.html">Sobre nós</a>
+            <a href="../pages/form.html">Formulário</a>
+            <a href="../pages/contato.html">Contato</a>
+            <span aria-current="page">Painel ADM</span>
+        </nav>
+    </header>
+
+    <main class="admin-container">
+        <section id="tela-login" class="login-card" aria-labelledby="titulo-login">
+            <a class="voltar-site" href="../index.html">← Voltar ao site</a>
+            <div class="login-marca" aria-hidden="true">DSM</div>
+            <p class="admin-eyebrow">Área restrita</p>
+            <h1 id="titulo-login">Acesso administrativo</h1>
+            <p class="login-intro">Entre com sua conta de administrador para gerenciar o conteúdo do site.</p>
+            <form id="form-login" class="admin-form">
+                <label for="email-admin">E-mail</label>
+                <input id="email-admin" name="email" type="email" autocomplete="username" required placeholder="admin@exemplo.com">
+                <label for="senha-admin">Senha</label>
+                <input id="senha-admin" name="senha" type="password" autocomplete="current-password" required placeholder="Sua senha">
+                <button class="admin-button" type="submit">Entrar no painel</button>
+                <p id="erro-login" class="admin-feedback" role="status" aria-live="polite"></p>
+            </form>
+            <p class="login-nota">As credenciais são gerenciadas pela equipe responsável pelo site.</p>
+        </section>
+
+        <section id="painel" hidden>
+            <div class="painel-topo">
+                <div><p class="admin-eyebrow">Área administrativa</p><h1>Painel de gestão</h1><p id="boas-vindas" class="painel-subtitulo"></p></div>
+                <button id="botao-sair" class="admin-button admin-button-secundario" type="button">Sair</button>
+            </div>
+            <nav class="abas-painel" aria-label="Seções do painel">
+                <button class="aba-painel ativa" type="button" data-aba="visao-geral">Visão geral</button>
+                <button class="aba-painel" type="button" data-aba="grade">Grade curricular</button>
+                <button class="aba-painel" type="button" data-aba="formularios">Respostas do formulário</button>
+            </nav>
+
+            <section class="conteudo-aba" id="aba-visao-geral" aria-labelledby="titulo-visao-geral">
+                <div class="secao-titulo"><div><h2 id="titulo-visao-geral">Acessos e navegação</h2><p>Visitas registradas nas páginas públicas deste site.</p></div><button class="texto-botao" type="button" data-atualizar>Atualizar dados</button></div>
+                <div class="cartoes-resumo">
+                    <article class="cartao-resumo"><span>Total de acessos</span><strong id="total-acessos">—</strong><small>Registros de navegação</small></article>
+                    <article class="cartao-resumo"><span>Páginas visitadas</span><strong id="paginas-visitadas">—</strong><small>Com ao menos uma visita</small></article>
+                    <article class="cartao-resumo"><span>Mensagens recebidas</span><strong id="total-mensagens">—</strong><small>Respostas ao formulário</small></article>
+                </div>
+                <article class="cartao-dados"><div class="cartao-cabecalho"><div><h3>Acessos por página</h3><p>Distribuição das visitas registradas</p></div><span class="indicador-atualizacao" id="status-acessos"></span></div><div id="grafico-acessos" class="grafico-acessos"><p class="estado-vazio">Carregando estatísticas…</p></div></article>
+            </section>
+
+            <section class="conteudo-aba" id="aba-grade" hidden>
+                <div class="secao-titulo"><div><h2>Editar grade curricular</h2><p>Uma disciplina por linha. As alterações aparecem na página pública da grade.</p></div></div>
+                <article class="cartao-dados editor-grade">
+                    <label for="conteudo-grade">Disciplinas do curso</label>
+                    <textarea id="conteudo-grade" rows="12" spellcheck="true"></textarea>
+                    <div class="acoes-editor"><p>Ao salvar, uma nova versão da grade será publicada.</p><button id="salvar-grade" class="admin-button" type="button">Salvar alterações</button></div>
+                    <p id="status-grade" class="admin-feedback" role="status" aria-live="polite"></p>
+                </article>
+                <article class="cartao-dados historico-grade"><div class="cartao-cabecalho"><div><h3>Últimas alterações</h3><p>Histórico de atualizações da grade</p></div></div><div id="historico-grade" class="lista-historico"><p class="estado-vazio">Carregando histórico…</p></div></article>
+            </section>
+
+            <section class="conteudo-aba" id="aba-formularios" hidden>
+                <div class="secao-titulo"><div><h2>Respostas recebidas</h2><p>Mensagens enviadas pela página pública Formulário.</p></div><button class="texto-botao" type="button" data-atualizar>Atualizar dados</button></div>
+                <article class="cartao-dados"><div class="cartao-cabecalho"><div><h3>Mensagens</h3><p id="resumo-formularios">Carregando respostas…</p></div></div><div id="lista-formularios" class="lista-formularios"><p class="estado-vazio">Carregando respostas…</p></div></article>
+            </section>
+            <p id="erro-painel" class="painel-erro" role="status" aria-live="polite"></p>
+        </section>
+    </main>
+    <script src="../js/admin.js" defer></script>
+</body>
+</html>
