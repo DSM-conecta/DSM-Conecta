@@ -1,0 +1,72 @@
+/* =========================
+   CONFIGURAÇÕES GERAIS
+========================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #1c1c1c;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+
+/* =========================
+   CABEÇALHO
+========================= */
+
+header {
+    padding: 25px 30px 0;
+}
+
+.cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 15px;
+}
+
+.instituicao p,
+.curso p {
+    font-size: 14px;
+}
+
+.instituicao p {
+    margin-bottom: 2px;
+}
+
+
+/* MENU*/
+
+nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    background-color: #392c9e;
+
+    height: 38px;
+    border-radius: 20px;
+
+    overflow: hidden;
+}
+
+nav a {
+    color: #ffffff;
+    text-decoration: none;
+
+    font-size: 14px;
+
+    padding: 9px 25px;
+
+    transition: background-color 0.2s;
+}
+
+nav a:hover {
+    background-color: #4b3bbb;
+}
