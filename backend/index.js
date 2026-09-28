@@ -6,11 +6,13 @@ const { salvarFGC } = require('./src/services/fgcService');
 const { salvarFG } = require('./src/services/fgService');
 
 const express = require('express');
+const path = require('path');
 const router = express.Router();
 
 const app = express();
 
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../frontend')));
 
 connectDB();
 
@@ -19,12 +21,14 @@ const telemetriaRoutes = require('./src/routes/telemetriaRoutes');
 const fgcRoutes = require('./src/routes/fgcRoutes');
 const fgRoutes = require('./src/routes/fgRoutes');
 const painelRoutes = require('./src/routes/painelRoutes');
+const formularioRoutes = require('./src/routes/formularioRoutes');
 
 router.use('/administradores', administradorRoutes);
 router.use('/telemetria', telemetriaRoutes);
 router.use('/fgc', fgcRoutes);
 router.use('/fg', fgRoutes);
 router.use('/painel', painelRoutes);
+router.use('/formularios', formularioRoutes);
 
 const BROKER_URL = process.env.MQTT_BROKER_URL || 'mqtt://localhost:1883';
 

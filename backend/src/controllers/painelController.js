@@ -6,6 +6,15 @@ const {
   removerPainel,
 } = require('../services/painelService');
 
+exports.gradeAtual = async (req, res) => {
+  try {
+    const registros = await listarPainel({ setor: 'grade-curricular' });
+    return res.status(200).json({ texto: registros[0]?.texto || '' });
+  } catch (erro) {
+    return res.status(500).json({ mensagem: erro.message });
+  }
+};
+
 // Criar novo registro de alteração no painel
 exports.criar = async (req, res) => {
   try {

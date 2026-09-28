@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Envie sua dúvida ou demonstre interesse no curso de Desenvolvimento de Software Multiplataforma.">
+    <title>Formulário | DSM Conecta</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/form-contato.css">
+</head>
+<body>
+    <header>
+        <div class="cabecalho">
+            <div class="instituicao"><h1>Fatec Zona Sul</h1><h2>Dom Paulo Evaristo Arns</h2></div>
+            <div class="curso"><h2>Desenvolvimento de Software Multiplataforma</h2></div>
+        </div>
+        <nav aria-label="Navegação principal">
+            <a href="../index.html">Tela inicial</a>
+            <a href="grade.html">Grade curricular</a>
+            <a href="sobre.html">Sobre nós</a>
+            <a href="form.html" aria-current="page">Formulário</a>
+            <a href="contato.html">Contato</a>
+        </nav>
+    </header>
+
+    <main class="pagina-conteudo">
+        <section class="bloco-introducao" aria-labelledby="titulo-formulario">
+            <p class="sobretitulo">DSM Conecta</p>
+            <h1 id="titulo-formulario">Vamos conversar?</h1>
+            <p>Quer saber mais sobre o curso de Desenvolvimento de Software Multiplataforma? Envie seus dados e sua dúvida. A equipe da Fatec Zona Sul poderá entrar em contato com você.</p>
+        </section>
+
+        <section class="cartao-formulario" aria-labelledby="titulo-envio">
+            <div class="cabecalho-cartao">
+                <span class="icone-cartao" aria-hidden="true">✉</span>
+                <div>
+                    <h2 id="titulo-envio">Fale com a gente</h2>
+                    <p>Os campos marcados com * são obrigatórios.</p>
+                </div>
+            </div>
+            <form id="formulario-interesse">
+                <div class="grade-campos">
+                    <label>Nome completo *<input name="nome" autocomplete="name" required maxlength="120" placeholder="Como podemos chamar você?"></label>
+                    <label>E-mail *<input name="email" type="email" autocomplete="email" required maxlength="180" placeholder="voce@exemplo.com"></label>
+                </div>
+                <label>O que você gostaria de saber?
+                    <select name="assunto" required>
+                        <option value="" disabled selected>Selecione um assunto</option>
+                        <option value="curso">Sobre o curso e as disciplinas</option>
+                        <option value="ingresso">Vestibular e formas de ingresso</option>
+                        <option value="projetos">Projetos e oportunidades</option>
+                        <option value="outro">Outro assunto</option>
+                    </select>
+                </label>
+                <label>Sua mensagem *<textarea name="mensagem" rows="5" required maxlength="1500" placeholder="Escreva sua dúvida ou mensagem"></textarea></label>
+                <div class="rodape-formulario">
+                    <p>Seus dados serão usados apenas para responder a esta mensagem.</p>
+                    <button class="botao-primario" type="submit">Enviar mensagem</button>
+                </div>
+                <p class="mensagem-formulario" id="status-formulario" role="status" aria-live="polite"></p>
+            </form>
+        </section>
+    </main>
+    <script src="../js/site.js" defer></script>
+    <script src="../js/formulario.js" defer></script>
+</body>
+</html>
