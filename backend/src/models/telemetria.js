@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 
 const telemetriaSchema = new mongoose.Schema({
+  topic: {
+    type: String,
+  },
   plataforma: {
     type: String,
     required: [true, 'Qual a plataforma?'],
