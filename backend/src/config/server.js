@@ -9,9 +9,10 @@ app.use(express.json());
 
 // Rotas HTTP
 app.use('/api/telemetria', telemetriaRoutes);
+app.use('/telemetria', telemetriaRoutes);
 
 // Conexão com MongoDB e inicialização dos serviços
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/dsmconecta';
+const MONGODB_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/dsmconecta';
 const PORT = process.env.PORT || 3000;
 
 mongoose.connect(MONGODB_URI)

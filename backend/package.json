@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "dev": "node src/config/server.js",
     "admin:create": "node scripts/createAdmin.js",
     "test": "jest",
     "lint": "eslint ."
