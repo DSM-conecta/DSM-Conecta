@@ -1,3 +1,4 @@
+require('dotenv').config();
 const mqtt = require("mqtt");
 const mongoose = require("mongoose");
 const { salvarTelemetria } = require("../services/telemetriaService");
@@ -32,8 +33,24 @@ function iniciarSubscriberTelemetria() {
   client.on("message", async (topic, message) => {
     try {
       const payload = JSON.parse(message.toString());
-      await salvarTelemetria({ ...payload, topic });
-      console.log(`[MQTT Subscriber] Mensagem processada do tópico: ${topic}`);
+
+      if (!payload.plataforma || !payload.setor || !payload.data || !payload.hora) {
+        console.warn(`[MQTT Subscriber] Payload inválido ignorado no tópico ${topic}: Faltam campos obrigatórios.`);
+        return;
+      }
+
+      const dadosTelemetria = { ...payload, topic };
+      
+      try {
+        await salvarTelemetria(dadosTelemetria);
+        console.log(`[MQTT Subscriber] Mensagem processada e salva com sucesso do tópico: ${topic}`);
+      } catch (dbErr) {
+        if (dbErr.code === 11000) {
+          console.warn(`[MQTT Subscriber] Evento duplicado ignorado (já existe no banco): tópico ${topic}`);
+        } else {
+          throw dbErr;
+        }
+      }
     } catch (err) {
       console.error(
         `[MQTT Subscriber] Erro ao processar mensagem do tópico ${topic}:`,

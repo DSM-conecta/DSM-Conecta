@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: '../.env' });
 const connectDB = require('./src/config/db');
 const mqtt = require('mqtt'); // npm install mqtt
 const { salvarTelemetria } = require('./src/services/telemetriaService');
