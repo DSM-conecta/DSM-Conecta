@@ -2,7 +2,6 @@ require('dotenv').config();
 const mqtt = require("mqtt");
 const mongoose = require("mongoose");
 const { salvarTelemetria } = require("../services/telemetriaService");
-const Telemetria = require("../models/telemetria");
 
 const MQTT_BROKER = process.env.MQTT_BROKER || "localhost";
 const MQTT_PORT = process.env.MQTT_PORT || 1883;

@@ -1,5 +1,4 @@
 const { enviarMensagemBroker } = require('../../src/mqtt/telemetriaPublisher');
-const mqtt = require('mqtt');
 
 jest.mock('mqtt', () => {
   const mockClient = {
@@ -29,7 +28,6 @@ describe('Teste de Carga / Stress (Load Test) do Publisher MQTT', () => {
       promessas.push(enviarMensagemBroker('dsm/prod/app/carga/teste', dados));
     }
 
-    // Garante que todas as 50 mensagens foram publicadas concorrentemente com sucesso
     await expect(Promise.all(promessas)).resolves.not.toThrow();
     expect(promessas.length).toBe(numeroDeMensagens);
   });
