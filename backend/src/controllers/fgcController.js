@@ -4,8 +4,6 @@ const { validarFormularioGC } = require('../validators/fgcValidator');
 
 // Criar novo registro FGC (via HTTP)
 exports.criar = async (req, res) => {
-  
-  exports.criar = async (req, res) => {
   try {
     if (!validarFormularioGC(req.body)) {
       return res.status(400).json({
@@ -15,14 +13,6 @@ exports.criar = async (req, res) => {
 
     const registro = await salvarFGC(req.body);
 
-    return res.status(201).json(registro);
-  } catch (erro) {
-    return res.status(400).json({ mensagem: erro.message });
-  }
-};
-  
-  try {
-    const registro = await salvarFGC(req.body);
     return res.status(201).json(registro);
   } catch (erro) {
     return res.status(400).json({ mensagem: erro.message });

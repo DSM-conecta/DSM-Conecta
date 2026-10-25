@@ -1,9 +1,18 @@
 const Formulario = require('../models/formulario');
+const eventBus = require('../realtime/eventBus');
 
 exports.criar = async (req, res) => {
   try {
     const { nome, email, assunto, mensagem } = req.body;
     const resposta = await Formulario.create({ nome, email, assunto, mensagem });
+    eventBus.emit('formulario', {
+      _id: resposta._id,
+      nome: resposta.nome,
+      email: resposta.email,
+      assunto: resposta.assunto,
+      mensagem: resposta.mensagem,
+      createdAt: resposta.createdAt,
+    });
     return res.status(201).json({ mensagem: 'Mensagem recebida.', id: resposta._id });
   } catch (erro) {
     return res.status(400).json({ mensagem: erro.message });

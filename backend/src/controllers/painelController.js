@@ -5,6 +5,7 @@ const {
   atualizarPainel,
   removerPainel,
 } = require('../services/painelService');
+const eventBus = require('../realtime/eventBus');
 
 exports.gradeAtual = async (req, res) => {
   try {
@@ -18,7 +19,10 @@ exports.gradeAtual = async (req, res) => {
 // Criar novo registro de alteração no painel
 exports.criar = async (req, res) => {
   try {
-    const painel = await criarPainel(req.body);
+    // O autor vem sempre do token da sessão — nunca do corpo da requisição,
+    // para que ninguém publique em nome de outro administrador.
+    const painel = await criarPainel({ ...req.body, administrador: req.admin.id });
+    eventBus.emit('painel', { _id: painel._id, setor: painel.setor, createdAt: painel.createdAt });
     return res.status(201).json(painel);
   } catch (erro) {
     return res.status(400).json({ mensagem: erro.message });
@@ -48,7 +52,11 @@ exports.buscarPorId = async (req, res) => {
 // Atualizar registro
 exports.atualizar = async (req, res) => {
   try {
-    const painel = await atualizarPainel(req.params.id, req.body);
+    // O autor de um registro não pode ser trocado por esta rota.
+    const dados = { ...req.body };
+    delete dados.administrador;
+    const painel = await atualizarPainel(req.params.id, dados);
+    eventBus.emit('painel', { _id: painel._id, setor: painel.setor, updatedAt: painel.updatedAt });
     return res.status(200).json(painel);
   } catch (erro) {
     return res.status(400).json({ mensagem: erro.message });

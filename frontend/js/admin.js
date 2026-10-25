@@ -14,6 +14,9 @@ const defaultGrade = [
     'Matemática para Computação',
 ].join('\n');
 
+let acessosPorPagina = {};
+let fluxoTempoReal = null;
+
 function getUser() {
     try { return JSON.parse(sessionStorage.getItem(adminUserKey) || '{}'); }
     catch { return {}; }
@@ -24,9 +27,11 @@ function showPanel(user = getUser()) {
     painelView.hidden = false;
     document.querySelector('#boas-vindas').textContent = user.nome ? `Olá, ${user.nome}. Aqui está o resumo do site.` : 'Gerencie o conteúdo e acompanhe a atividade do site.';
     refreshDashboard();
+    conectarTempoReal();
 }
 
 function showLogin() {
+    desconectarTempoReal();
     sessionStorage.removeItem(adminTokenKey);
     sessionStorage.removeItem(adminUserKey);
     painelView.hidden = true;
@@ -56,7 +61,7 @@ loginForm?.addEventListener('submit', async (event) => {
     loginError.textContent = 'Verificando acesso…';
     try {
         const dados = Object.fromEntries(new FormData(loginForm).entries());
-        const response = await fetch('/administradores/login', {
+        const response = await fetch('/api/administradores/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dados),
@@ -100,19 +105,19 @@ async function refreshDashboard() {
 }
 
 async function loadStats() {
-    const registros = await api('/telemetria');
-    const acessos = Array.isArray(registros) ? registros : [];
-    const porPagina = acessos.reduce((resultado, acesso) => {
-        const pagina = acesso.setor || 'outras';
-        resultado[pagina] = (resultado[pagina] || 0) + 1;
-        return resultado;
-    }, {});
-    document.querySelector('#total-acessos').textContent = acessos.length.toLocaleString('pt-BR');
-    document.querySelector('#paginas-visitadas').textContent = Object.keys(porPagina).length.toLocaleString('pt-BR');
+    const metricas = await api('/api/metricas/acessos');
+    acessosPorPagina = Object.fromEntries((metricas.porSetor || []).map(({ chave, total }) => [chave || 'outras', total]));
+    renderAcessos();
     document.querySelector('#status-acessos').textContent = 'Atualizado agora';
+}
+
+function renderAcessos() {
+    const total = Object.values(acessosPorPagina).reduce((soma, quantidade) => soma + quantidade, 0);
+    document.querySelector('#total-acessos').textContent = total.toLocaleString('pt-BR');
+    document.querySelector('#paginas-visitadas').textContent = Object.keys(acessosPorPagina).length.toLocaleString('pt-BR');
     const container = document.querySelector('#grafico-acessos');
     container.replaceChildren();
-    const paginasOrdenadas = Object.entries(porPagina).sort((a, b) => b[1] - a[1]);
+    const paginasOrdenadas = Object.entries(acessosPorPagina).sort((a, b) => b[1] - a[1]);
     if (!paginasOrdenadas.length) {
         container.innerHTML = '<p class="estado-vazio">Ainda não há visitas registradas.</p>';
         return;
@@ -139,7 +144,7 @@ async function loadStats() {
 }
 
 async function loadGrade() {
-    const registros = await api('/painel?setor=grade-curricular');
+    const registros = await api('/api/painel?setor=grade-curricular');
     const historico = Array.isArray(registros) ? registros : [];
     document.querySelector('#conteudo-grade').value = historico[0]?.texto || defaultGrade;
     const container = document.querySelector('#historico-grade');
@@ -162,7 +167,6 @@ async function loadGrade() {
 }
 
 async function saveGrade() {
-    const user = getUser();
     const button = document.querySelector('#salvar-grade');
     const status = document.querySelector('#status-grade');
     const texto = document.querySelector('#conteudo-grade').value.split('\n').map((linha) => linha.trim()).filter(Boolean).join('\n');
@@ -173,9 +177,9 @@ async function saveGrade() {
     }
     button.disabled = true;
     try {
-        await api('/painel', {
+        await api('/api/painel', {
             method: 'POST',
-            body: JSON.stringify({ setor: 'grade-curricular', texto, imagemUrl: '/assets/imgs/Fatec_zona_sul.jpg', administrador: user._id }),
+            body: JSON.stringify({ setor: 'grade-curricular', texto, imagemUrl: '/assets/imgs/Fatec_zona_sul.jpg' }),
         });
         status.style.color = '#c8f2d2';
         status.textContent = 'Grade publicada com sucesso.';
@@ -189,7 +193,7 @@ async function saveGrade() {
 }
 
 async function loadForms() {
-    const registros = await api('/formularios');
+    const registros = await api('/api/formularios');
     const respostas = Array.isArray(registros) ? registros : [];
     document.querySelector('#total-mensagens').textContent = respostas.length.toLocaleString('pt-BR');
     document.querySelector('#resumo-formularios').textContent = `${respostas.length.toLocaleString('pt-BR')} mensagem(ns) recebida(s)`;
@@ -226,6 +230,95 @@ async function loadForms() {
         item.append(topo, mensagem);
         container.append(item);
     });
+}
+
+// ---------- Tempo real (Server-Sent Events) ----------
+// EventSource não envia o cabeçalho Authorization, então lemos o fluxo com fetch.
+const rotulosTempoReal = {
+    conectando: ['Conectando…', 'conectando'],
+    conectado: ['Tempo real ativo', 'conectado'],
+    reconectando: ['Reconectando…', 'reconectando'],
+};
+
+function mostrarStatusTempoReal(estado, detalhe = '') {
+    const elemento = document.querySelector('#status-tempo-real');
+    if (!elemento) return;
+    const [texto, classe] = rotulosTempoReal[estado];
+    elemento.textContent = detalhe ? `${texto} · ${detalhe}` : texto;
+    elemento.className = `status-tempo-real ${classe}`;
+}
+
+function desconectarTempoReal() {
+    fluxoTempoReal?.abort();
+    fluxoTempoReal = null;
+}
+
+function tratarEventoTempoReal(bloco) {
+    let evento = 'message';
+    const dados = [];
+    bloco.split('\n').forEach((linha) => {
+        if (linha.startsWith('event:')) evento = linha.slice(6).trim();
+        else if (linha.startsWith('data:')) dados.push(linha.slice(5).trim());
+    });
+    if (!dados.length) return; // comentário de batimento (": ping")
+
+    let conteudo = {};
+    try { conteudo = JSON.parse(dados.join('\n')); } catch { return; }
+
+    if (evento === 'status') {
+        mostrarStatusTempoReal('conectado', conteudo.mqtt?.conectado ? 'MQTT conectado' : 'MQTT offline');
+    } else if (evento === 'telemetria') {
+        const pagina = conteudo.setor || 'outras';
+        acessosPorPagina[pagina] = (acessosPorPagina[pagina] || 0) + 1;
+        renderAcessos();
+        document.querySelector('#status-acessos').textContent = 'Nova visita agora';
+    } else if (evento === 'formulario') {
+        loadForms().catch(() => {});
+    } else if (evento === 'painel') {
+        loadGrade().catch(() => {});
+    } else if (evento === 'sessao-expirada') {
+        showLogin();
+    }
+}
+
+async function conectarTempoReal() {
+    desconectarTempoReal();
+    const controle = new AbortController();
+    fluxoTempoReal = controle;
+    let tentativa = 0;
+
+    while (!controle.signal.aborted) {
+        try {
+            mostrarStatusTempoReal(tentativa ? 'reconectando' : 'conectando');
+            const resposta = await fetch('/api/tempo-real/eventos', {
+                headers: { Authorization: `Bearer ${sessionStorage.getItem(adminTokenKey)}`, Accept: 'text/event-stream' },
+                signal: controle.signal,
+            });
+            if (resposta.status === 401) { showLogin(); return; }
+            if (!resposta.ok || !resposta.body) throw new Error('Fluxo indisponível');
+
+            tentativa = 0;
+            const leitor = resposta.body.getReader();
+            const decodificador = new TextDecoder();
+            let buffer = '';
+            for (;;) {
+                const { value, done } = await leitor.read();
+                if (done) break;
+                buffer += decodificador.decode(value, { stream: true });
+                let fim;
+                while ((fim = buffer.indexOf('\n\n')) >= 0) {
+                    tratarEventoTempoReal(buffer.slice(0, fim));
+                    buffer = buffer.slice(fim + 2);
+                }
+            }
+        } catch {
+            if (controle.signal.aborted) return;
+        }
+        mostrarStatusTempoReal('reconectando');
+        const espera = Math.min(15000, 1000 * 2 ** tentativa);
+        tentativa += 1;
+        await new Promise((resolver) => setTimeout(resolver, espera));
+    }
 }
 
 if (sessionStorage.getItem(adminTokenKey)) showPanel();

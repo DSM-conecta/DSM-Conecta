@@ -42,7 +42,7 @@ function autenticar(req, res, next) {
     if (!dados.id || dados.exp <= Math.floor(Date.now() / 1000)) {
       return res.status(401).json({ mensagem: 'Sessão administrativa expirada.' });
     }
-    req.admin = { id: dados.id };
+    req.admin = { id: dados.id, exp: dados.exp };
     return next();
   } catch {
     return res.status(401).json({ mensagem: 'Sessão administrativa inválida.' });

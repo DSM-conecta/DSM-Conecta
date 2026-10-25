@@ -2,7 +2,7 @@ const nomePagina = window.location.pathname.includes('/pages/')
     ? window.location.pathname.split('/').pop().replace('.html', '')
     : 'inicio';
 
-fetch('/telemetria', {
+fetch('/api/telemetria', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -14,7 +14,7 @@ fetch('/telemetria', {
 }).catch(() => {});
 
 if (nomePagina === 'grade') {
-    fetch('/painel/grade-atual')
+    fetch('/api/painel/grade-atual')
         .then((resposta) => (resposta.ok ? resposta.json() : null))
         .then((grade) => {
             if (!grade?.texto) return;
