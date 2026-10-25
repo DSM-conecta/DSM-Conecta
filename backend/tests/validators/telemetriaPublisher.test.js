@@ -18,7 +18,9 @@ describe("Validação do Publisher de Telemetria MQTT", () => {
       plataforma: "Web",
       setor: "Geral",
       evento: "teste_ci",
-    };
+      data: new Date().toISOString(),
+      hora: "21:35",
+  };
 
     await expect(
       enviarMensagemBroker("dsm/prod/app/interacao/tela", dados),

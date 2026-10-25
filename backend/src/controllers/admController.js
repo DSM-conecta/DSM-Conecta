@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs"); // npm install bcryptjs
 const Administrador = require("../models/adm");
+const authAdmin = require("../middleware/authAdmin");
 
 // Criar novo administrador
 exports.criar = async (req, res) => {
@@ -112,7 +113,12 @@ exports.remover = async (req, res) => {
 // Login (bônus: útil já que existe senha/email)
 exports.login = async (req, res) => {
   try {
-    const { email, senha } = req.body;
+    const email = typeof req.body.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+    const senha = typeof req.body.senha === 'string' ? req.body.senha : '';
+
+    if (!email || !senha) {
+      return res.status(401).json({ mensagem: "Email ou senha inválidos." });
+    }
 
     const administrador = await Administrador.findOne({ email });
     if (!administrador) {
@@ -127,7 +133,7 @@ exports.login = async (req, res) => {
     const adminSemSenha = administrador.toObject();
     delete adminSemSenha.senha;
 
-    return res.status(200).json(adminSemSenha);
+    return res.status(200).json({ ...adminSemSenha, token: authAdmin.gerarToken(administrador._id) });
   } catch (erro) {
     return res.status(500).json({ mensagem: erro.message });
   }

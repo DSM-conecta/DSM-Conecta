@@ -1,0 +1,139 @@
+.pagina-conteudo {
+    width: min(100% - 40px, 980px);
+    margin: 36px auto 80px;
+}
+
+.bloco-introducao {
+    width: min(100%, 720px);
+    margin: 0 auto 26px;
+    padding: 25px 30px;
+    border: 1px solid rgba(255, 255, 255, .09);
+    border-radius: 14px;
+    background: #d9d9d9;
+    color: #24222d;
+}
+
+.bloco-introducao .sobretitulo {
+    margin-bottom: 7px;
+    color: #392c9e;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+}
+
+.bloco-introducao h1 {
+    margin-bottom: 10px;
+    font-size: clamp(23px, 4vw, 32px);
+}
+
+.bloco-introducao > p:last-child {
+    max-width: 620px;
+    color: #514f58;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.cartao-formulario,
+.cartao-contato {
+    width: min(100%, 660px);
+    margin: 0 auto;
+    padding: 28px;
+    border: 1px solid rgba(255, 255, 255, .1);
+    border-radius: 14px;
+    background: #29282d;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, .18);
+}
+
+.cabecalho-cartao,
+.item-contato {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.cabecalho-cartao { margin-bottom: 22px; }
+.cabecalho-cartao h2,
+.item-contato h2 { margin: 1px 0 5px; font-size: 17px; }
+.cabecalho-cartao p,
+.item-contato p { color: #c6c4ce; font-size: 14px; line-height: 1.55; }
+
+.icone-cartao {
+    display: grid;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    place-items: center;
+    border-radius: 11px;
+    background: rgba(76, 61, 185, .32);
+    color: #b5aaff;
+    font-size: 20px;
+}
+
+.cartao-formulario form,
+.cartao-formulario label { display: grid; gap: 8px; }
+.cartao-formulario form { gap: 17px; }
+.cartao-formulario label { color: #f4f3f8; font-size: 13px; font-weight: 600; }
+.grade-campos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+
+.cartao-formulario input,
+.cartao-formulario select,
+.cartao-formulario textarea {
+    width: 100%;
+    min-height: 44px;
+    padding: 11px 12px;
+    border: 1px solid #48464f;
+    border-radius: 8px;
+    outline: none;
+    background: #1e1d22;
+    color: #fff;
+    font: inherit;
+    font-size: 14px;
+}
+
+.cartao-formulario textarea { resize: vertical; }
+.cartao-formulario input:focus,
+.cartao-formulario select:focus,
+.cartao-formulario textarea:focus { border-color: #9485ff; box-shadow: 0 0 0 3px rgba(148, 133, 255, .16); }
+.cartao-formulario input::placeholder,
+.cartao-formulario textarea::placeholder { color: #8d8b95; }
+
+.rodape-formulario { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+.rodape-formulario p,
+.nota-contato { color: #aaa8b3; font-size: 12px; line-height: 1.5; }
+.botao-primario {
+    display: inline-flex;
+    min-height: 43px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 8px;
+    background: #4939b5;
+    color: #fff;
+    cursor: pointer;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background .2s ease, transform .2s ease;
+}
+.botao-primario:hover { background: #5b49ce; transform: translateY(-1px); }
+.mensagem-formulario { min-height: 20px; color: #c8f2d2; font-size: 13px; }
+.mensagem-formulario.erro { color: #ffb8b8; }
+
+.pagina-contato .bloco-introducao { margin-bottom: 28px; }
+.cartao-contato { display: grid; gap: 24px; width: min(100%, 600px); padding: 30px; }
+.item-contato a { color: #b7aaff; font-size: 14px; }
+.item-contato a:hover { color: #d0c8ff; }
+.item-contato .nota-contato { margin-top: 5px; }
+.chamada-contato { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 20px; border-top: 1px solid #44424b; }
+.chamada-contato p { color: #f4f3f8; font-size: 14px; }
+
+@media (max-width: 680px) {
+    .pagina-conteudo { width: min(100% - 28px, 980px); margin-top: 25px; }
+    .bloco-introducao, .cartao-formulario, .cartao-contato { padding: 21px; }
+    .grade-campos { grid-template-columns: 1fr; }
+    .rodape-formulario, .chamada-contato { align-items: stretch; flex-direction: column; }
+    .rodape-formulario .botao-primario, .chamada-contato .botao-primario { width: 100%; }
+}
