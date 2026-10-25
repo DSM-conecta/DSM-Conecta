@@ -4,8 +4,6 @@ const { validarFormularioG } = require('../validators/fgValidator');
 
 // Criar novo registro FG (via HTTP)
 exports.criar = async (req, res) => {
-    
-    exports.criar = async (req, res) => {
   try {
     if (!validarFormularioG(req.body)) {
       return res.status(400).json({
@@ -15,14 +13,6 @@ exports.criar = async (req, res) => {
 
     const registro = await salvarFG(req.body);
 
-    return res.status(201).json(registro);
-  } catch (erro) {
-    return res.status(400).json({ mensagem: erro.message });
-  }
-};
-    
-    try {
-    const registro = await salvarFG(req.body);
     return res.status(201).json(registro);
   } catch (erro) {
     return res.status(400).json({ mensagem: erro.message });

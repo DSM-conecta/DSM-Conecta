@@ -1,103 +1,47 @@
-require('dotenv').config({ path: '../.env' });
-const connectDB = require('./src/config/db');
-const mqtt = require('mqtt'); // npm install mqtt
-const { salvarTelemetria } = require('./src/services/telemetriaService');
-const { salvarFGC } = require('./src/services/fgcService');
-const { salvarFG } = require('./src/services/fgService');
-
-const express = require('express');
 const path = require('path');
-const router = express.Router();
 
-const app = express();
+// Carrega o .env de backend/.env (ou, se não existir, da raiz do projeto).
+// Precisa vir antes dos demais require, que leem process.env.
+require('dotenv').config({
+  path: [path.join(__dirname, '.env'), path.join(__dirname, '..', '.env')],
+  quiet: true,
+});
 
-app.use(express.json());
-app.use(express.static(path.join(__dirname, '../frontend')));
-
-connectDB();
-
-const administradorRoutes = require('./src/routes/admRoutes');
-const telemetriaRoutes = require('./src/routes/telemetriaRoutes');
-const fgcRoutes = require('./src/routes/fgcRoutes');
-const fgRoutes = require('./src/routes/fgRoutes');
-const painelRoutes = require('./src/routes/painelRoutes');
-const formularioRoutes = require('./src/routes/formularioRoutes');
-
-router.use('/administradores', administradorRoutes);
-router.use('/telemetria', telemetriaRoutes);
-router.use('/fgc', fgcRoutes);
-router.use('/fg', fgRoutes);
-router.use('/painel', painelRoutes);
-router.use('/formularios', formularioRoutes);
-
-const BROKER_URL = process.env.MQTT_BROKER_URL || 'mqtt://localhost:1883';
-
-const TOPICO_TELEMETRIA = process.env.MQTT_TOPICO_TELEMETRIA || 'telemetria/dados';
-const TOPICO_FGC = process.env.MQTT_TOPICO_FGC || 'fgc/dados';
-const TOPICO_FG = process.env.MQTT_TOPICO_FG || 'fg/dados';
-
-// Mapeia cada tópico para a função que sabe salvar aquele tipo de dado
-const HANDLERS_POR_TOPICO = {
-  [TOPICO_TELEMETRIA]: salvarTelemetria,
-  [TOPICO_FGC]: salvarFGC,
-  [TOPICO_FG]: salvarFG,
-};
-
-function iniciarMqtt() {
-  const client = mqtt.connect(BROKER_URL, {
-    // username: process.env.MQTT_USER,
-    // password: process.env.MQTT_PASS,
-  });
-
-  client.on('connect', () => {
-    console.log(`[MQTT] Conectado ao broker: ${BROKER_URL}`);
-
-    const topicos = Object.keys(HANDLERS_POR_TOPICO);
-
-    client.subscribe(topicos, (erro) => {
-      if (erro) {
-        console.error('[MQTT] Erro ao se inscrever nos tópicos:', erro.message);
-      } else {
-        console.log(`[MQTT] Inscrito nos tópicos: ${topicos.join(', ')}`);
-      }
-    });
-  });
-
-  client.on('message', async (topico, mensagem) => {
-    const handler = HANDLERS_POR_TOPICO[topico];
-
-    if (!handler) {
-      console.warn(`[MQTT] Mensagem recebida em tópico não tratado: ${topico}`);
-      return;
-    }
-
-    try {
-      const payload = JSON.parse(mensagem.toString());
-      const registro = await handler(payload);
-
-      console.log(`[MQTT] Registro salvo (id: ${registro._id}) via tópico "${topico}"`);
-    } catch (erro) {
-      console.error(`[MQTT] Erro ao processar mensagem de "${topico}":`, erro.message);
-    }
-  });
-
-  client.on('error', (erro) => {
-    console.error('[MQTT] Erro de conexão:', erro.message);
-  });
-
-  client.on('reconnect', () => {
-    console.log('[MQTT] Tentando reconectar ao broker...');
-  });
-
-  return client;
-}
-
-app.use('/', router);
+const connectDB = require('./src/config/db');
+const { createApp } = require('./src/app');
+const { iniciarSubscriberTelemetria } = require('./src/mqtt/telemetriaSubscriber');
+const { atualizarMqtt } = require('./src/realtime/estado');
+const sseHub = require('./src/realtime/sseHub');
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
+async function iniciar() {
+  await connectDB();
 
-module.exports = { iniciarMqtt, router };
+  // Canal em tempo real: assina o broker MQTT e grava/transmite cada mensagem.
+  // MQTT_HABILITADO=false permite rodar só a API/site sem um broker.
+  let mqttClient = null;
+  if (process.env.MQTT_HABILITADO === 'false') {
+    atualizarMqtt({ habilitado: false });
+    console.log('[MQTT] Desabilitado por MQTT_HABILITADO=false.');
+  } else {
+    mqttClient = iniciarSubscriberTelemetria();
+  }
+
+  const server = createApp().listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+    console.log(`Documentação da API: http://localhost:${PORT}/api/docs`);
+  });
+
+  const encerrar = () => {
+    console.log('Encerrando servidor...');
+    sseHub.encerrarTodos();
+    if (mqttClient) mqttClient.end();
+    server.close(() => process.exit(0));
+    setTimeout(() => process.exit(0), 3000).unref();
+  };
+  process.on('SIGINT', encerrar);
+  process.on('SIGTERM', encerrar);
+}
+
+iniciar();

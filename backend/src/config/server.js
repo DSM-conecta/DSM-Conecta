@@ -1,31 +1,4 @@
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const { iniciarSubscriberTelemetria } = require('../mqtt/telemetriaSubscriber');
-const telemetriaRoutes = require('../routes/telemetriaRoutes');
-
-const app = express();
-app.use(express.json());
-
-// Rotas HTTP
-app.use('/api/telemetria', telemetriaRoutes);
-app.use('/telemetria', telemetriaRoutes);
-
-// Conexão com MongoDB e inicialização dos serviços
-const MONGODB_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/dsmconecta';
-const PORT = process.env.PORT || 3000;
-
-mongoose.connect(MONGODB_URI)
-  .then(() => {
-    console.log('[MongoDB] Conectado com sucesso!');
-    
-    // Inicia o serviço MQTT após confirmar a conexão com o banco
-    iniciarSubscriberTelemetria();
-
-    app.listen(PORT, () => {
-      console.log(`[HTTP] Servidor rodando na porta ${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error('[MongoDB] Erro ao conectar:', err.message);
-  });
+// Arquivo legado: antes era um segundo ponto de entrada (só telemetria) e
+// deixava as duas versões do servidor divergirem. Agora `npm run dev` e
+// `npm start` usam o mesmo index.js.
+require('../../index');

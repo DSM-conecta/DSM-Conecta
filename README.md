@@ -94,31 +94,83 @@ Instale as dependências:
 npm install
 ```
 
-Configure as variáveis de ambiente necessárias para a conexão com o MongoDB e o MQTT.
+Copie `.env.example` para `.env` e preencha as variáveis (veja abaixo).
 
-Depois, execute o projeto:
+Depois, execute o projeto (`npm run dev` reinicia sozinho ao salvar arquivos):
 
 ```bash
 npm start
 ```
 
-O front-end é servido pelo backend. Com o servidor ativo, a página inicial fica em `http://localhost:5000/` e o acesso administrativo em `http://localhost:5000/admin`.
+O front-end é servido pelo backend. Com o servidor ativo, a página inicial fica em `http://localhost:5000/`, o acesso administrativo em `http://localhost:5000/admin` e a documentação da API em `http://localhost:5000/api/docs`.
 
 Para criar a primeira conta administrativa, configure `MONGODB_URI` e execute `npm run admin:create`. O comando solicita nome, e-mail e senha no terminal. Configure também `ADMIN_TOKEN_SECRET` com um valor privado e estável para manter as sessões válidas entre reinicializações.
 
 ## Variáveis de ambiente
 
-As configurações sensíveis do projeto devem ser armazenadas em um arquivo `.env`.
-
-Exemplo:
+As configurações sensíveis do projeto ficam em `backend/.env` (copie `backend/.env.example`).
 
 ```env
-MONGODB_URI=sua_string_de_conexao
-MQTT_BROKER=seu_broker
-MQTT_PORT=sua_porta
+PORT=5000
+MONGODB_URI=mongodb://localhost:27017/dsmconecta
+ADMIN_TOKEN_SECRET=troque-por-um-valor-longo-e-aleatorio
+MQTT_BROKER=localhost
+MQTT_PORT=1883
+MQTT_USER=dsm-mosquitto
+MQTT_PASSWORD=senha-do-mosquitto
+MQTT_TOPICO=dsm/#
+MQTT_HABILITADO=true
 ```
 
 O arquivo `.env` não deve ser enviado para o repositório quando contiver senhas, chaves ou outras informações privadas.
+
+## Subindo banco e broker com Docker
+
+```bash
+# 1) cria o arquivo de senhas do Mosquitto (uma vez; ele não vai para o Git)
+docker run --rm -v "$PWD":/work eclipse-mosquitto:2.0 \
+  mosquitto_passwd -c -b /work/mosquitto_passwords.txt dsm-mosquitto SUA_SENHA
+
+# 2) sobe MongoDB + Mosquitto
+docker compose up -d
+```
+
+Use o mesmo usuário e senha em `MQTT_USER` e `MQTT_PASSWORD`.
+
+## API REST (documentada e autenticada)
+
+- **Documentação interativa (Swagger UI):** `http://localhost:5000/api/docs`
+- **Especificação OpenAPI (JSON):** `http://localhost:5000/api/openapi.json` (código em `backend/src/docs/openapi.js`)
+- **Prefixo:** `/api/...`. Os endereços sem `/api` continuam funcionando por compatibilidade.
+
+**Autenticação:** `POST /api/administradores/login` devolve um token; envie-o em `Authorization: Bearer <token>` (vale 8 h). No Swagger UI use o botão **Authorize**. Rotas com cadeado na documentação exigem o token.
+
+| Grupo | Endpoints principais | Acesso |
+|---|---|---|
+| Conteúdo | `GET /painel/grade-atual`, `GET/POST/PUT/DELETE /painel`, `POST/GET /formularios` | leitura da grade e envio de mensagem são públicos; o resto exige token |
+| Métricas | `GET /metricas/resumo`, `GET /metricas/acessos?dias=&setor=&plataforma=` | token |
+| Tempo real | `GET /tempo-real/eventos` (SSE), `GET /tempo-real/status` | token |
+| Telemetria | `POST /telemetria` (público), `GET/PUT/DELETE /telemetria` | leitura/alteração exige token |
+| Pesquisas | `POST /fg`, `POST /fgc` (públicos); leitura/alteração exige token | misto |
+| Administradores | `/administradores` | token (login é público) |
+| Sistema | `GET /saude` | público |
+
+Ao criar uma rota nova, documente-a em `openapi.js`: o teste `tests/api/docs.test.js` confere se tudo que está documentado existe e se as rotas marcadas como protegidas realmente recusam quem não tem token.
+
+Resumo completo das mudanças, mapa front-end ↔ back-end e pendências: [`docs/API-E-TEMPO-REAL.md`](docs/API-E-TEMPO-REAL.md).
+
+## Canal em tempo real
+
+```text
+site/app ──MQTT──► Mosquitto ──► backend (subscriber dsm/#) ──► MongoDB
+site ──HTTP POST /api/telemetria──────────────┘                    │
+                                                                   ▼
+                              painel administrativo ◄── SSE ◄── barramento de eventos
+```
+
+- **MQTT:** o backend assina `dsm/#` assim que sobe (`MQTT_HABILITADO=false` desliga). Para testar, com o servidor rodando: `node src/mqtt/telemetriaPublisher.js` (dentro de `backend/`).
+- **SSE:** `GET /api/tempo-real/eventos` envia os eventos `status`, `telemetria`, `formulario` e `painel` assim que acontecem. O painel administrativo usa esse fluxo: contadores, gráfico e lista de mensagens atualizam sozinhos, e o selo "Tempo real ativo" mostra se o MQTT está conectado.
+- **Verificar se está em operação:** `GET /api/saude` (público) mostra `mqtt.conectado`; `GET /api/tempo-real/status` (token) mostra também quantos painéis estão ligados.
 
 ## Desenvolvimento
 

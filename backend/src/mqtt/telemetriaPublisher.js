@@ -1,14 +1,8 @@
 const mqtt = require('mqtt');
 
-const MQTT_BROKER = process.env.MQTT_BROKER || 'localhost';
-const MQTT_PORT = process.env.MQTT_PORT || 1883;
-const BROKER_URL = `mqtt://${MQTT_BROKER}:${MQTT_PORT}`;
+const { BROKER_URL, opcoesConexao } = require('../config/mqtt');
 
-const client = mqtt.connect(BROKER_URL, {
-  username: process.env.MQTT_USER || 'dsm-mosquitto',
-  password: process.env.MQTT_PASSWORD || '12345',
-  reconnectPeriod: 2000,
-});
+const client = mqtt.connect(BROKER_URL, opcoesConexao());
 
 if (client && typeof client.on === 'function') {
   client.on('connect', () => {

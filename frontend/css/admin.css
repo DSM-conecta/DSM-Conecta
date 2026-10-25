@@ -86,3 +86,10 @@
     .abas-painel .aba-painel { text-align: left; }
     .item-historico, .item-formulario-topo { flex-direction: column; }
 }
+
+.indicadores-cartao { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.status-tempo-real { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #9b98a5; }
+.status-tempo-real::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #9b98a5; }
+.status-tempo-real.conectado { color: #c8f2d2; }
+.status-tempo-real.conectado::before { background: #4ade80; box-shadow: 0 0 0 3px rgba(74, 222, 128, .2); }
+.status-tempo-real.conectando::before, .status-tempo-real.reconectando::before { background: #facc15; }

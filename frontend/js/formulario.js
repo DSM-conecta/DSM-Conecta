@@ -11,7 +11,7 @@ if (formInteresse) {
         const dados = Object.fromEntries(new FormData(formInteresse).entries());
 
         try {
-            const resposta = await fetch('/formularios', {
+            const resposta = await fetch('/api/formularios', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dados),
