@@ -6,9 +6,12 @@ const path = require('path');
 const express = require('express');
 
 const { iniciarSubscriberTelemetria } = require('./src/mqtt/telemetriaSubscriber');
+// eslint-disable-next-line no-unused-vars
 const { salvarFGC } = require('./src/services/fgcService');
+// eslint-disable-next-line no-unused-vars
 const { salvarFG } = require('./src/services/fgService');
 const mqtt = require('mqtt');
+// eslint-disable-next-line no-unused-vars
 const { BROKER_URL, TOPICO_FGC, TOPICO_FG, opcoesConexao } = require('./src/config/mqtt');
 
 const router = express.Router();
