@@ -1,17 +1,20 @@
+const { enviarMensagemBroker } = require('../mqtt/telemetriaPublisher');
 const Telemetria = require('../models/telemetria');
-const { salvarTelemetria } = require('../services/telemetriaService');
 
-// Criar novo registro de telemetria (via HTTP)
 exports.criar = async (req, res) => {
   try {
-    const telemetria = await salvarTelemetria(req.body);
-    return res.status(201).json(telemetria);
+    const dados = req.body;
+    const setor = dados.setor || 'Geral';
+    const topico = `dsm/prod/app/interacao/${setor}`;
+
+    await enviarMensagemBroker(topico, dados);
+
+    return res.status(202).json({ mensagem: 'Evento de telemetria enviado para o broker MQTT com sucesso.' });
   } catch (erro) {
     return res.status(400).json({ mensagem: erro.message });
   }
 };
 
-// Listar todos os registros (com filtros opcionais por query string)
 exports.listar = async (req, res) => {
   try {
     const { plataforma, setor } = req.query;

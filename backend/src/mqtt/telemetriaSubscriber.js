@@ -2,6 +2,7 @@ require('dotenv').config({ quiet: true });
 const mqtt = require("mqtt");
 const mongoose = require("mongoose");
 const { salvarTelemetria } = require("../services/telemetriaService");
+const motorEstatistico = require("../services/motorEstatisticoService");
 const { BROKER_URL, TOPICO_TELEMETRIA, opcoesConexao } = require("../config/mqtt");
 const { atualizarMqtt, obterEstadoMqtt } = require("../realtime/estado");
 
@@ -13,85 +14,103 @@ const { atualizarMqtt, obterEstadoMqtt } = require("../realtime/estado");
  * @returns {import('mqtt').MqttClient} cliente MQTT (use .end() para encerrar)
  */
 function iniciarSubscriberTelemetria() {
-  const client = mqtt.connect(BROKER_URL, {
-    ...opcoesConexao(),
-    clientId: `backend_subscriber_${Math.random().toString(16).substring(2, 8)}`,
-    clean: true,
-  });
-
-  atualizarMqtt({ habilitado: true, broker: BROKER_URL, topico: TOPICO_TELEMETRIA });
-
-  client.on("connect", () => {
-    console.log("[MQTT Subscriber] Conectado ao broker com sucesso!");
-    atualizarMqtt({ conectado: true, ultimoErro: null });
-
-    client.subscribe(TOPICO_TELEMETRIA, { qos: 1 }, (err) => {
-      if (err) {
-        console.error("[MQTT Subscriber] Erro ao assinar tópicos:", err);
-        atualizarMqtt({ ultimoErro: err.message });
-      } else {
-        console.log(
-          `[MQTT Subscriber] Inscrito na árvore de tópicos: ${TOPICO_TELEMETRIA}`,
-        );
-      }
-    });
-  });
-
-  client.on("close", () => atualizarMqtt({ conectado: false }));
-  client.on("offline", () => atualizarMqtt({ conectado: false }));
-
-  client.on("message", async (topic, message) => {
-    atualizarMqtt({
-      mensagensRecebidas: obterEstadoMqtt().mensagensRecebidas + 1,
-      ultimaMensagemEm: new Date().toISOString(),
+    const client = mqtt.connect(BROKER_URL, {
+        ...opcoesConexao(),
+        clientId: `backend_subscriber_${Math.random().toString(16).substring(2, 8)}`,
+        clean: true,
     });
 
-    try {
-      const payload = JSON.parse(message.toString());
+    atualizarMqtt({ habilitado: true, broker: BROKER_URL, topico: TOPICO_TELEMETRIA });
 
-      if (!payload.plataforma || !payload.setor || !payload.data || !payload.hora) {
-        console.warn(`[MQTT Subscriber] Payload inválido ignorado no tópico ${topic}: Faltam campos obrigatórios.`);
-        return;
-      }
+    client.on("connect", () => {
+        console.log("[MQTT Subscriber] Conectado ao broker com sucesso!");
+        atualizarMqtt({ conectado: true, ultimoErro: null });
 
-      const dadosTelemetria = { ...payload, topic };
+        client.subscribe(TOPICO_TELEMETRIA, { qos: 1 }, (err) => {
+            if (err) {
+                console.error("[MQTT Subscriber] Erro ao assinar tópicos:", err);
+                atualizarMqtt({ ultimoErro: err.message });
+            } else {
+                console.log(
+                    `[MQTT Subscriber] Inscrito na árvore de tópicos: ${TOPICO_TELEMETRIA}`,
+                );
+            }
+        });
+    });
 
-      try {
-        await salvarTelemetria(dadosTelemetria);
-        atualizarMqtt({ mensagensSalvas: obterEstadoMqtt().mensagensSalvas + 1 });
-        console.log(`[MQTT Subscriber] Mensagem processada e salva com sucesso do tópico: ${topic}`);
-      } catch (dbErr) {
-        if (dbErr.code === 11000) {
-          console.warn(`[MQTT Subscriber] Evento duplicado ignorado (já existe no banco): tópico ${topic}`);
-        } else {
-          throw dbErr;
+    client.on("close", () => atualizarMqtt({ conectado: false }));
+    client.on("offline", () => atualizarMqtt({ conectado: false }));
+
+    client.on("message", async (topic, message) => {
+        atualizarMqtt({
+            mensagensRecebidas: obterEstadoMqtt().mensagensRecebidas + 1,
+            ultimaMensagemEm: new Date().toISOString(),
+        });
+
+        try {
+            const payload = JSON.parse(message.toString());
+
+            if (!payload.plataforma || !payload.setor || !payload.data || !payload.hora) {
+                console.warn(`[MQTT Subscriber] Payload inválido ignorado no tópico ${topic}: Faltam campos obrigatórios.`);
+                return;
+            }
+
+            const valorNumerico = Number(payload.valor || payload.temperatura || 0);
+
+            const analise = motorEstatistico.processar(topic, valorNumerico);
+
+            const dadosTelemetria = {
+                ...payload,
+                topic,
+                valor: valorNumerico,
+                estatisticas: {
+                    mediaMovel: Number(analise.mediaMovel || 0),
+                    desvio: Number(analise.desvio || 0),
+                    ehAnomalia: Boolean(analise.ehAnomalia)
+                }
+            };
+
+            try {
+                await salvarTelemetria(dadosTelemetria);
+                atualizarMqtt({ mensagensSalvas: obterEstadoMqtt().mensagensSalvas + 1 });
+
+                if (analise.ehAnomalia) {
+                    console.warn(`[ALERTA] Anomalia detetada no tópico ${topic}! Valor: ${valorNumerico} | Média Móvel: ${analise.mediaMovel}`);
+                } else {
+                    console.log(`[MQTT Subscriber] Mensagem processada, analisada e salva com sucesso do tópico: ${topic}`);
+                }
+            } catch (dbErr) {
+                if (dbErr.code === 11000) {
+                    console.warn(`[MQTT Subscriber] Evento duplicado ignorado (já existe no banco): tópico ${topic}`);
+                } else {
+                    throw dbErr;
+                }
+            }
+        } catch (err) {
+            console.error(
+                `[MQTT Subscriber] Erro ao processar mensagem do tópico ${topic}:`,
+                err.message,
+            );
         }
-      }
-    } catch (err) {
-      console.error(
-        `[MQTT Subscriber] Erro ao processar mensagem do tópico ${topic}:`,
-        err.message,
-      );
-    }
-  });
+    });
 
-  client.on("error", (err) => {
-    console.error("[MQTT Subscriber] Erro na conexão:", err.message);
-    atualizarMqtt({ ultimoErro: err.message });
-  });
+    client.on("error", (err) => {
+        console.error("[MQTT Subscriber] Erro na conexão:", err.message);
+        atualizarMqtt({ ultimoErro: err.message });
+    });
 
-  return client;
+    return client;
 }
 
 if (require.main === module) {
-  const MONGO_URI = process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://localhost:27017/dsmconecta';
+    const MONGO_URI = process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://localhost:27017/dsmconecta';
 
-  mongoose.connect(MONGO_URI)
-    .then(() => {
-      console.log('[MongoDB] Conectado para gravação de telemetria!');
-      iniciarSubscriberTelemetria();
-    })
-    .catch((err) => console.error('[MongoDB] Erro ao conectar:', err.message));
+    mongoose.connect(MONGO_URI)
+        .then(() => {
+            console.log('[MongoDB] Conectado para gravação de telemetria!');
+            iniciarSubscriberTelemetria();
+        })
+        .catch((err) => console.error('[MongoDB] Erro ao conectar:', err.message));
 }
 
 module.exports = { iniciarSubscriberTelemetria };

@@ -1,47 +1,91 @@
-const path = require('path');
-
-// Carrega o .env de backend/.env (ou, se não existir, da raiz do projeto).
-// Precisa vir antes dos demais require, que leem process.env.
-require('dotenv').config({
-  path: [path.join(__dirname, '.env'), path.join(__dirname, '..', '.env')],
-  quiet: true,
-});
-
+require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 const connectDB = require('./src/config/db');
-const { createApp } = require('./src/app');
+const qrcode = require('qrcode-terminal'); // npm install qrcode-terminal
+const os = require('os');
+const path = require('path');
+const express = require('express');
+
 const { iniciarSubscriberTelemetria } = require('./src/mqtt/telemetriaSubscriber');
-const { atualizarMqtt } = require('./src/realtime/estado');
-const sseHub = require('./src/realtime/sseHub');
+// eslint-disable-next-line no-unused-vars
+const { salvarFGC } = require('./src/services/fgcService');
+// eslint-disable-next-line no-unused-vars
+const { salvarFG } = require('./src/services/fgService');
+const mqtt = require('mqtt');
+// eslint-disable-next-line no-unused-vars
+const { BROKER_URL, TOPICO_FGC, TOPICO_FG, opcoesConexao } = require('./src/config/mqtt');
+
+const router = express.Router();
+const app = express();
+
+app.use(express.json());
+app.use(express.static(path.join(__dirname, '../frontend')));
+
+connectDB();
+
+const administradorRoutes = require('./src/routes/admRoutes');
+const telemetriaRoutes = require('./src/routes/telemetriaRoutes');
+const fgcRoutes = require('./src/routes/fgcRoutes');
+const fgRoutes = require('./src/routes/fgRoutes');
+const painelRoutes = require('./src/routes/painelRoutes');
+const formularioRoutes = require('./src/routes/formularioRoutes');
+
+router.use('/administradores', administradorRoutes);
+router.use('/telemetria', telemetriaRoutes);
+router.use('/fgc', fgcRoutes);
+router.use('/fg', fgRoutes);
+router.use('/painel', painelRoutes);
+router.use('/formularios', formularioRoutes);
+
+function iniciarMqtt() {
+    iniciarSubscriberTelemetria();
+
+    const client = mqtt.connect(BROKER_URL, opcoesConexao());
+
+    client.on('connect', () => {
+        console.log(`[MQTT Geral] Conectado ao broker para FGC/FG: ${BROKER_URL}`);
+
+        const topicosParaAssinar = ['fgc/dados', 'fg/dados'];
+
+        client.subscribe(topicosParaAssinar, { qos: 1 }, (erro) => {
+            if (erro) {
+                console.error('[MQTT Geral] Erro ao se inscrever nos tópicos:', erro.message);
+            } else {
+                console.log(`[MQTT Geral] Inscrito nos tópicos: ${topicosParaAssinar.join(', ')}`);
+            }
+        });
+    });
+
+    return client;
+}
+
+function obterIpLocal() {
+    const interfaces = os.networkInterfaces();
+    for (const nome in interfaces) {
+        for (const net of interfaces[nome]) {
+            if (net.family === 'IPv4' && !net.internal) {
+                return net.address;
+            }
+        }
+    }
+    return 'localhost';
+}
+
+app.use('/', router);
 
 const PORT = process.env.PORT || 5000;
 
-async function iniciar() {
-  await connectDB();
-
-  // Canal em tempo real: assina o broker MQTT e grava/transmite cada mensagem.
-  // MQTT_HABILITADO=false permite rodar só a API/site sem um broker.
-  let mqttClient = null;
-  if (process.env.MQTT_HABILITADO === 'false') {
-    atualizarMqtt({ habilitado: false });
-    console.log('[MQTT] Desabilitado por MQTT_HABILITADO=false.');
-  } else {
-    mqttClient = iniciarSubscriberTelemetria();
-  }
-
-  const server = createApp().listen(PORT, () => {
+app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
-    console.log(`Documentação da API: http://localhost:${PORT}/api/docs`);
-  });
 
-  const encerrar = () => {
-    console.log('Encerrando servidor...');
-    sseHub.encerrarTodos();
-    if (mqttClient) mqttClient.end();
-    server.close(() => process.exit(0));
-    setTimeout(() => process.exit(0), 3000).unref();
-  };
-  process.on('SIGINT', encerrar);
-  process.on('SIGTERM', encerrar);
-}
+    iniciarMqtt();
 
-iniciar();
+    const ip = obterIpLocal();
+    const urlAcesso = `http://${ip}:${PORT}/index.html`;
+
+    console.log(`\nAcede no telemóvel através de: ${urlAcesso}\n`);
+    qrcode.generate(urlAcesso, { small: true }, (qrcodeStr) => {
+        console.log(qrcodeStr);
+    });
+});
+
+module.exports = { iniciarMqtt, router };

@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "node --watch index.js",
+    "dev": "node index.js",
     "admin:create": "node scripts/createAdmin.js",
     "test": "jest",
     "lint": "eslint ."
@@ -14,12 +14,14 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "mongodb": "^7.6.0",
     "mongoose": "^9.10.1",
-    "mqtt": "^5.15.2"
+    "mqtt": "^5.15.2",
+    "qrcode-terminal": "^0.12.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

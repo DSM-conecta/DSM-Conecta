@@ -1,6 +1,19 @@
 const { createApp } = require('../../src/app');
 const { gerarToken } = require('../../src/middleware/authAdmin');
 
+jest.mock('mqtt', () => {
+    const { EventEmitter } = require('events');
+    return {
+        connect: jest.fn(() => {
+            const cliente = new EventEmitter();
+            cliente.subscribe = jest.fn((topico, opcoes, cb) => { if (cb) cb(null); });
+            cliente.publish = jest.fn((topico, mensagem, options, cb) => { if (cb) cb(null); });
+            cliente.end = jest.fn();
+            return cliente;
+        }),
+    };
+}, { virtual: true });
+
 const ID_FALSO = '665f1c2e8b3a4d0012ab34cd';
 
 // Sobe o app em uma porta livre e devolve utilitários para os testes.
