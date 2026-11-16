@@ -8,6 +8,7 @@
     <title>Desenvolvimento de Software Multiplataforma</title>
 
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/form-contato.css">
     <link rel="stylesheet" href="css/index.css">
 </head>
 
@@ -27,42 +28,35 @@
 
         </div>
 
-        <nav>
-            <a href="index.html">Tela inicial</a>
+        <nav aria-label="Navegação principal">
+            <a href="index.html" aria-current="page">Tela inicial</a>
             <a href="pages/grade.html">Grade curricular</a>
             <a href="pages/sobre.html">Sobre nós</a>
             <a href="pages/form.html">Formulário</a>
             <a href="pages/contato.html">Contato</a>
+            <a href="admin/admin.html">Administração</a>
         </nav>
     </header>
 
 
-    <main>
-
-        <section class="apresentacao">
-
+    <main class="pagina-conteudo pagina-inicial">
+        <section class="bloco-introducao" aria-labelledby="titulo-inicial">
+            <p class="sobretitulo">Fatec Zona Sul · DSM</p>
+            <h1 id="titulo-inicial">Tecnologia para transformar ideias em soluções</h1>
+            <p>O curso de Desenvolvimento de Software Multiplataforma prepara profissionais para criar aplicações web, mobile e sistemas de software.</p>
+        </section>
+        <section class="apresentacao" aria-label="Apresentação do curso">
             <div class="texto-curso">
-                <p>
-                   O curso de Desenvolvimento de Software Multiplataforma (DSM) prepara profissionais para atuar no desenvolvimento de aplicações web, mobile e sistemas de software. Durante a formação, os alunos aprendem programação, banco de dados, desenvolvimento web, engenharia de software e outras tecnologias utilizadas no mercado. O curso também busca desenvolver habilidades práticas por meio de projetos, preparando os estudantes para compreender diferentes etapas do desenvolvimento de uma aplicação e trabalhar com soluções tecnológicas para diferentes necessidades.
-                </p>
+                <h2>Aprenda fazendo</h2>
+                <p>Durante a formação, os alunos estudam programação, banco de dados, desenvolvimento web, engenharia de software e outras tecnologias utilizadas no mercado. Projetos práticos ajudam a compreender as etapas de desenvolvimento e a criar soluções para diferentes necessidades.</p>
             </div>
-
-
             <div class="imagem-fatec">
                 <img src="assets/imgs/Fatec_zona_sul.jpg" alt="Fachada da Fatec Zona Sul">
             </div>
-
         </section>
-
-
-        <section class="parcerias">
-
-            <p>
-                PARCEIROS FATEC
-            </p>
-
+        <section class="parcerias" aria-label="Parceiros da Fatec">
+            <h2>Parceiros Fatec</h2>
         </section>
-
     </main>
 
     <script src="js/site.js" defer></script>

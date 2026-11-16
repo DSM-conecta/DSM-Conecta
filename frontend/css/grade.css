@@ -1,94 +1,43 @@
-/* =========================
-   GRADE CURRICULAR
-========================= */
-
 .grade {
-    position: relative;
-
-    width: 90%;
-    min-height: 550px;
-
-    margin: 40px auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(240px, .8fr);
+    gap: 18px;
 }
 
-
-/* =========================
-   MATÉRIAS
-========================= */
-
-.materias {
-    position: absolute;
-
-    left: 0;
-    top: 0;
-
-    width: 48%;
-}
-
-.materias h3 {
-    display: inline-block;
-
-    background-color: #d9d9d9;
-    color: #000000;
-
-    font-size: 13px;
-    font-weight: normal;
-
-    padding: 6px 10px;
-
-    margin-bottom: 8px;
-}
-
-.materias p {
-    width: 80%;
-
-    background-color: #d9d9d9;
-    color: #000000;
-
-    margin-bottom: 7px;
-    padding: 6px 10px;
-
-    font-size: 14px;
-    line-height: 1.3;
-}
-
-
-/* =========================
-   CURSOS PREPARATÓRIOS
-========================= */
-
+.materias,
 .cursos-preparatorios {
-    position: absolute;
-
-    right: 0;
-    top: 130px;
-
-    width: 48%;
+    padding: 25px;
+    border: 1px solid rgba(255, 255, 255, .1);
+    border-radius: 14px;
+    background: #29282d;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, .18);
 }
 
-.cursos-preparatorios h3 {
-    display: inline-block;
-
-    background-color: #d9d9d9;
-    color: #000000;
-
-    font-size: 13px;
-    font-weight: normal;
-
-    padding: 6px 10px;
-
-    margin-bottom: 8px;
+.materias h2,
+.cursos-preparatorios h2 {
+    margin-bottom: 16px;
+    font-size: 17px;
 }
 
-.cursos-preparatorios p {
-    width: 85%;
+.materias ul,
+.cursos-preparatorios ul {
+    display: grid;
+    gap: 9px;
+    list-style: none;
+}
 
-    background-color: #d9d9d9;
-    color: #000000;
+.materias li,
+.cursos-preparatorios li {
+    padding: 11px 13px;
+    border: 1px solid #403e47;
+    border-radius: 8px;
+    background: #242328;
+    color: #e7e5ed;
+    font-size: 14px;
+    line-height: 1.5;
+}
 
-    margin-bottom: 7px;
-    padding: 4px 8px;
-
-    font-size: 12px;
-    line-height: 1.2;
+@media (max-width: 680px) {
+    .grade { grid-template-columns: 1fr; }
+    .materias, .cursos-preparatorios { padding: 21px; }
 }

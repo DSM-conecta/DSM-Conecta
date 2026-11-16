@@ -8,6 +8,7 @@
     <title>Sobre Nós - DSM</title>
 
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/form-contato.css">
     <link rel="stylesheet" href="../css/sobre.css">
 </head>
 
@@ -27,47 +28,44 @@
 
         </div>
 
-        <nav>
+        <nav aria-label="Navegação principal">
             <a href="../index.html">Tela inicial</a>
             <a href="grade.html">Grade curricular</a>
-            <a href="sobre.html">Sobre nós</a>
+            <a href="sobre.html" aria-current="page">Sobre nós</a>
             <a href="form.html">Formulário</a>
             <a href="contato.html">Contato</a>
+            <a href="../admin/admin.html">Administração</a>
         </nav>
     </header>
 
 
-    <main>
-
-        <section class="sobre">
-
-            <div class="equipe">
-
-                <h3>CITAR A EQUIPE</h3>
-
-                <p>LUCAS BOY</p>
-                <p>DENI</p>
-                <p>EMANUELY</p>
-                <p>VITORIA</p>
-                <p>WELBER</p>
-
-            </div>
-
-
-            <div class="sobre-curso">
-
-                <h3>CITAR A EQUIPE</h3>
-
-                <p>GENIO DA BOLA</p>
-                <p>DOCUMENTADORA.</p>
-                <p>PROGRAMADORA.</p>
-                <p>APOIO MORAL.</p>
-                <p>MENTE POR TRÁS DE TUDO.</p>
-                
-            </div>
-
+    <main class="pagina-conteudo">
+        <section class="bloco-introducao" aria-labelledby="titulo-sobre">
+            <p class="sobretitulo">DSM Conecta</p>
+            <h1 id="titulo-sobre">Sobre nós</h1>
+            <p>Somos a equipe por trás deste espaço, criado para apresentar o curso de Desenvolvimento de Software Multiplataforma da Fatec Zona Sul.</p>
         </section>
-
+        <section class="sobre" aria-label="Equipe do projeto">
+            <div class="equipe">
+                <h2>Nossa equipe</h2>
+                <ul>
+                    <li>Lucas</li>
+                    <li>Daniela </li>
+                    <li>Emanuely</li>
+                    <li>Vitória</li>
+                    <li>Welber</li>
+                </ul>
+            </div>
+            <div class="sobre-curso">
+                <h2>Como contribuímos</h2>
+                <ul>
+                    <li>Documentação</li>
+                    <li>Programação</li>
+                    <li>Organização e apoio</li>
+                    <li>Desenvolvimento do projeto</li>
+                </ul>
+            </div>
+        </section>
     </main>
 
     <script src="../js/site.js" defer></script>
