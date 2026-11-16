@@ -115,8 +115,9 @@ exports.login = async (req, res) => {
   try {
     const email = typeof req.body.email === 'string' ? req.body.email.trim().toLowerCase() : '';
     const senha = typeof req.body.senha === 'string' ? req.body.senha : '';
+    const emailPermitido = (process.env.ADMIN_EMAIL || 'admin@admin.com').trim().toLowerCase();
 
-    if (!email || !senha) {
+    if (!email || !senha || email !== emailPermitido) {
       return res.status(401).json({ mensagem: "Email ou senha inválidos." });
     }
 

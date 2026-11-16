@@ -8,6 +8,7 @@
     <title>Grade Curricular - DSM</title>
 
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/form-contato.css">
     <link rel="stylesheet" href="../css/grade.css">
 </head>
 
@@ -27,46 +28,45 @@
 
         </div>
 
-        <nav>
+        <nav aria-label="Navegação principal">
             <a href="../index.html">Tela inicial</a>
-            <a href="grade.html">Grade curricular</a>
+            <a href="grade.html" aria-current="page">Grade curricular</a>
             <a href="sobre.html">Sobre nós</a>
             <a href="form.html">Formulário</a>
             <a href="contato.html">Contato</a>
+            <a href="../admin/admin.html">Administração</a>
         </nav>
     </header>
 
 
-    <main>
-
-        <section class="grade">
-
-            <div class="materias">
-
-                <h3>MATÉRIAS</h3>
-                <p>Algoritmo e Lógica de Programação</p>
-                <p>Modelagem de Banco de Dados</p>
-                <p>Sistemas Operacionais e Redes de Computadores</p>
-                <p>Design Digital</p>
-                <p>Engenharia de Software I</p>
-                <p>Desenvolvimento Web I</p>
-                <p>Matemática para Computação</p>
-            </div>
-
-
-            <div class="cursos-preparatorios">
-
-                <h3>CURSOS PREPARATÓRIOS</h3>
-
-                <p>Aprova Fatec</p>
-                <p>Vestec</p>
-                <p>Estratégia Vestibulares</p>
-                
-
-            </div>
-
+    <main class="pagina-conteudo">
+        <section class="bloco-introducao" aria-labelledby="titulo-grade">
+            <p class="sobretitulo">Formação em DSM</p>
+            <h1 id="titulo-grade">Grade curricular</h1>
+            <p>Conheça algumas disciplinas do curso e opções de preparação para o processo seletivo da Fatec.</p>
         </section>
-
+        <section class="grade" aria-label="Disciplinas e preparação para o vestibular">
+            <div class="materias">
+                <h2>Disciplinas do curso</h2>
+                <ul>
+                    <li>Algoritmo e Lógica de Programação</li>
+                    <li>Modelagem de Banco de Dados</li>
+                    <li>Sistemas Operacionais e Redes de Computadores</li>
+                    <li>Design Digital</li>
+                    <li>Engenharia de Software I</li>
+                    <li>Desenvolvimento Web I</li>
+                    <li>Matemática para Computação</li>
+                </ul>
+            </div>
+            <div class="cursos-preparatorios">
+                <h2>Preparação para o vestibular</h2>
+                <ul>
+                    <li>Aprova Fatec</li>
+                    <li>Vestec</li>
+                    <li>Estratégia Vestibulares</li>
+                </ul>
+            </div>
+        </section>
     </main>
 
     <script src="../js/site.js" defer></script>

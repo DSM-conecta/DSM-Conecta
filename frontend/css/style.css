@@ -70,3 +70,11 @@ nav a {
 nav a:hover {
     background-color: #4b3bbb;
 }
+
+@media (max-width: 760px) {
+    header { padding: 20px 14px 0; }
+    .cabecalho { align-items: flex-start; flex-direction: column; gap: 9px; }
+    .curso h2 { text-align: left; }
+    nav { height: auto; min-height: 38px; flex-wrap: wrap; justify-content: flex-start; }
+    nav a { flex: 1 1 auto; padding: 10px 12px; text-align: center; }
+}
